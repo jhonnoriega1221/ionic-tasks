@@ -1,13 +1,43 @@
 <ion-header [translucent]="true">
     <ion-toolbar>
-        <ion-title>categories</ion-title>
+        <ion-title>Categorías</ion-title>
     </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-    <ion-header collapse="condense">
-        <ion-toolbar>
-            <ion-title size="large">categories</ion-title>
-        </ion-toolbar>
-    </ion-header>
+<ion-content [fullscreen]="true" [scrollY]="false">
+    @if (categories.length > 0) {
+        <cdk-virtual-scroll-viewport
+            itemSize="49"
+            style="height: 100%; width: 100%; display: block"
+        >
+            <ion-list class="ion-padding-bottom">
+                <ion-item-sliding #slidingItem *cdkVirtualFor="let category of categories">
+                    <ion-item button (click)="openModal(category)">
+                        <ion-label> {{ category.name }} </ion-label>
+                    </ion-item>
+                    <ion-item-options side="end">
+                        <ion-item-option
+                            (click)="confirmDeleteCategory(category.id)"
+                            color="danger"
+                            expandable
+                        >
+                            <ion-icon name="trash"></ion-icon>
+                            <span slot="bottom">Eliminar</span>
+                        </ion-item-option>
+                    </ion-item-options>
+                </ion-item-sliding>
+            </ion-list>
+        </cdk-virtual-scroll-viewport>
+    } @else {
+        <app-data-state
+            icon="alert-circle-outline"
+            title="Aún no hay categorías creadas, crea la primera"
+        />
+    }
+
+    <ion-fab id="category-fab" horizontal="end" vertical="bottom" slot="fixed">
+        <ion-fab-button (click)="openModal()">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
 </ion-content>
