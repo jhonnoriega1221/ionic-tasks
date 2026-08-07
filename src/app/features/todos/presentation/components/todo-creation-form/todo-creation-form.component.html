@@ -1,0 +1,54 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>Nueva tarea</ion-title>
+        <ion-buttons slot="end">
+            <ion-button [strong]="true" (click)="dismiss()">Cerrar</ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+    <form id="todoForm" [formGroup]="todoForm" (ngSubmit)="onSubmit()">
+        <ion-input
+            formControlName="name"
+            label="Nombre de la tarea"
+            labelPlacement="floating"
+            fill="outline"
+            errorText="El nombre es obligatorio"
+            class="ion-margin-bottom"
+        />
+
+        <ion-textarea
+            formControlName="description"
+            label="Descripción de la tarea"
+            labelPlacement="floating"
+            fill="outline"
+            rows="6"
+            errorText="La descripción es obligatoria"
+            class="ion-margin-bottom"
+        />
+
+        <ion-grid class="ion-no-padding">
+            <ion-row class="ion-align-items-center">
+                <ion-col size="10">
+                    <ion-select
+                        formControlName="categoryId"
+                        label="Categoría"
+                        labelPlacement="floating"
+                        fill="outline"
+                        interface="popover"
+                    >
+                        <ion-select-option value="">Sin categoría</ion-select-option>
+                    </ion-select>
+                </ion-col>
+                <ion-col size="2" class="ion-text-center">
+                    <ion-button fill="clear" shape="round" size="large">
+                        <ion-icon slot="icon-only" name="add" />
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </form>
+</ion-content>
+<ion-footer class="ion-padding">
+    <ion-button type="submit" form="todoForm" expand="block" [disabled]="todoForm.invalid">Crear tarea</ion-button>
+</ion-footer>

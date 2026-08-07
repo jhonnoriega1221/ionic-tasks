@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import {
     IonContent,
     IonHeader,
@@ -13,9 +13,11 @@ import {
     IonItemOption,
     IonItemOptions,
     IonItemSliding,
-    IonCheckbox
+    IonCheckbox,
+    IonModal
 } from "@ionic/angular/standalone";
-import { ScrollingModule } from "@angular/cdk/scrolling";
+import { CdkVirtualScrollViewport, ScrollingModule } from "@angular/cdk/scrolling";
+import { TodoCreationFormComponent } from "../../components/todo-creation-form/todo-creation-form.component";
 
 @Component({
     selector: "app-todos",
@@ -23,6 +25,7 @@ import { ScrollingModule } from "@angular/cdk/scrolling";
     styleUrls: ["./todos.page.scss"],
     standalone: true,
     imports: [
+        IonModal,
         ScrollingModule,
         IonItemSliding,
         IonItemOptions,
@@ -37,10 +40,15 @@ import { ScrollingModule } from "@angular/cdk/scrolling";
         IonTitle,
         IonToolbar,
         IonFab,
-        IonCheckbox
+        IonCheckbox,
+        TodoCreationFormComponent
     ]
 })
 export class TodosPage implements OnInit {
+    @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
+
+    presentingElement!: HTMLElement | null;
+
     tasks = Array.from({ length: 1000 }, (_, i) => ({
         id: i,
         name: `Tarea ${i + 1}`,
@@ -48,5 +56,13 @@ export class TodosPage implements OnInit {
     }));
     constructor() {}
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.presentingElement = document.querySelector(".page-content");
+    }
+
+    ionViewDidEnter() {
+        if (this.viewport) {
+            this.viewport.checkViewportSize();
+        }
+    }
 }
