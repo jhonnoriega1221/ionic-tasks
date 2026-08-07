@@ -24,6 +24,10 @@ export class TaskStorageRepository implements TaskRepository {
         return todos.sort((a, b) => (a.order || 0) - (b.order || 0));
     }
 
+    async updateMultipleTasks(tasks: Task[]): Promise<void> {
+        await this.storage.setMultiple(this.STORE_NAME, tasks);
+    }
+
     async getTaskById(id: string): Promise<Task | null> {
         return await this.storage.get<Task>(this.STORE_NAME, id);
     }

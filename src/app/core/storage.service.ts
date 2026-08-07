@@ -37,6 +37,17 @@ export class StorageService {
         await storage.set(key, value);
     }
 
+    public async setMultiple<T extends { id: string }>(
+        storeName: string,
+        items: T[]
+    ): Promise<void> {
+        const storage = await this.ensureStorage(storeName);
+
+        const promises = items.map((item) => storage.set(item.id, item));
+
+        await Promise.all(promises);
+    }
+
     public async get<T>(storeName: string, key: string): Promise<T | null> {
         const storage = await this.ensureStorage(storeName);
         return await storage.get(key);

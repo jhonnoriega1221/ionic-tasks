@@ -11,7 +11,7 @@
             style="height: 100%; width: 100%; display: block"
         >
             <ion-list class="ion-padding-bottom">
-                <ion-reorder-group [disabled]="false">
+                <ion-reorder-group [disabled]="false" (ionItemReorder)="onReorder($event)">
                     <ion-item-sliding #slidingItem *cdkVirtualFor="let task of tasks">
                         <ion-item button (click)="openModal(task)">
                             <ion-checkbox

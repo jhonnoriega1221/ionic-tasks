@@ -29,6 +29,7 @@ import { GetTasksUseCase } from "../../../domain/usecases/get-tasks.usecase";
 import { DeleteTasksUseCase } from "../../../domain/usecases/delete-task.usecase";
 import { DataStateComponent } from "src/app/shared/components/data-state/data-state.component";
 import { UpdateTaskUseCase } from "../../../domain/usecases/update-task.usecase";
+import { UpdateMultipleTaskUseCase } from "../../../domain/usecases/update-multiple-tasks.usecase";
 @Component({
     selector: "app-todos",
     templateUrl: "./todos.page.html",
@@ -68,7 +69,8 @@ export class TodosPage implements OnInit {
         private createTaskUseCase: CreateTaskUseCase,
         private getAllTasksUseCase: GetTasksUseCase,
         private deleteTaskUseCase: DeleteTasksUseCase,
-        private updateTaskUseCase: UpdateTaskUseCase
+        private updateTaskUseCase: UpdateTaskUseCase,
+        private updateMultipleTaskUseCase: UpdateMultipleTaskUseCase
     ) {}
 
     async ngOnInit() {
@@ -90,6 +92,20 @@ export class TodosPage implements OnInit {
             this.tasks = await this.getAllTasksUseCase.execute();
         } catch (error) {
             console.error("Error al cargar las tareas: ", error);
+        }
+    }
+
+    async onReorder(event: CustomEvent<ItemReorderEventDetail>) {
+        const itemToMove = this.tasks.splice(event.detail.from, 1)[0];
+
+        this.tasks.splice(event.detail.to, 0, itemToMove);
+
+        event.detail.complete();
+
+        try {
+            await this.updateMultipleTaskUseCase.execute(this.tasks);
+        } catch (error) {
+            console.error("Error persistiendo el reordenamiento:", error);
         }
     }
 

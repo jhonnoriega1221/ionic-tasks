@@ -106,7 +106,7 @@ export class TodoCreationFormComponent implements OnInit {
                     categoryId: newCategory.id
                 });
             } catch (error) {
-                console.error("Hubo error al crear categoría: ", error)
+                console.error("Hubo error al crear categoría: ", error);
             }
         }
     }
