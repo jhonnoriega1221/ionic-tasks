@@ -26,10 +26,13 @@
             </ion-list>
         </cdk-virtual-scroll-viewport>
     } @else {
-        <app-data-state icon="alert-circle-outline" title="Aún no hay tareas creadas, crea la primera" />
+        <app-data-state
+            icon="alert-circle-outline"
+            title="Aún no hay tareas creadas, crea la primera"
+        />
     }
 
-    <ion-fab horizontal="end" vertical="bottom" slot="fixed">
+    <ion-fab id="task-fab" horizontal="end" vertical="bottom" slot="fixed">
         <ion-fab-button id="open-modal">
             <ion-icon name="add"></ion-icon>
         </ion-fab-button>
@@ -40,4 +43,6 @@
             <app-todo-creation-form class="ion-page" />
         </ng-template>
     </ion-modal>
+
+    <ion-toast />
 </ion-content>

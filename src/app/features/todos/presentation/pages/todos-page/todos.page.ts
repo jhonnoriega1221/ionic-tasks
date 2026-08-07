@@ -14,7 +14,9 @@ import {
     IonItemOptions,
     IonItemSliding,
     IonCheckbox,
-    IonModal
+    IonModal,
+    IonToast,
+    ToastController
 } from "@ionic/angular/standalone";
 import { CdkVirtualScrollViewport, ScrollingModule } from "@angular/cdk/scrolling";
 import { TodoCreationFormComponent } from "../../components/todo-creation-form/todo-creation-form.component";
@@ -29,6 +31,7 @@ import { DataStateComponent } from "src/app/shared/components/data-state/data-st
     styleUrls: ["./todos.page.scss"],
     standalone: true,
     imports: [
+        IonToast,
         IonModal,
         ScrollingModule,
         IonItemSliding,
@@ -56,6 +59,7 @@ export class TodosPage implements OnInit {
     tasks: Task[] = [];
 
     constructor(
+        private toastController: ToastController,
         private createTaskUseCase: CreateTaskUseCase,
         private getAllTasksUseCase: GetTasksUseCase,
         private deleteTaskUseCase: DeleteTasksUseCase
@@ -77,7 +81,15 @@ export class TodosPage implements OnInit {
     async onDeleteTask(taskId: string) {
         try {
             await this.deleteTaskUseCase.execute(taskId);
+
             this.tasks = this.tasks.filter((t) => t.id !== taskId);
+            const toast = await this.toastController.create({
+                message: "Tarea eliminada exitosamente",
+                positionAnchor: "task-fab",
+                duration: 2000
+            });
+
+            await toast.present();
         } catch (error) {
             console.error("Error al eliminar tarea: ", error);
         }
@@ -103,6 +115,14 @@ export class TodosPage implements OnInit {
                 this.tasks = [...this.tasks, newTask];
 
                 setTimeout(() => this.viewport?.checkViewportSize(), 50);
+
+                const toast = await this.toastController.create({
+                    message: "Tarea creada exitosamente",
+                    positionAnchor: "task-fab",
+                    duration: 2000
+                });
+
+                await toast.present();
             } catch (error) {
                 console.error("Error al intentar agregar tarea: ", error);
             }
