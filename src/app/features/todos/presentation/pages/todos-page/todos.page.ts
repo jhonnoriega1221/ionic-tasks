@@ -19,7 +19,8 @@ import {
     ToastController,
     IonAlert,
     IonButton,
-    AlertController
+    AlertController,
+    ModalController
 } from "@ionic/angular/standalone";
 import { CdkVirtualScrollViewport, ScrollingModule } from "@angular/cdk/scrolling";
 import { TodoCreationFormComponent } from "../../components/todo-creation-form/todo-creation-form.component";
@@ -28,6 +29,7 @@ import { Task } from "../../../domain/models/task.model";
 import { GetTasksUseCase } from "../../../domain/usecases/get-tasks.usecase";
 import { DeleteTasksUseCase } from "../../../domain/usecases/delete-task.usecase";
 import { DataStateComponent } from "src/app/shared/components/data-state/data-state.component";
+import { UpdateTaskUseCase } from "../../../domain/usecases/update-task.usecase";
 @Component({
     selector: "app-todos",
     templateUrl: "./todos.page.html",
@@ -66,14 +68,22 @@ export class TodosPage implements OnInit {
     constructor(
         private toastController: ToastController,
         private alertController: AlertController,
+        private modalController: ModalController,
         private createTaskUseCase: CreateTaskUseCase,
         private getAllTasksUseCase: GetTasksUseCase,
-        private deleteTaskUseCase: DeleteTasksUseCase
+        private deleteTaskUseCase: DeleteTasksUseCase,
+        private updateTaskUseCase: UpdateTaskUseCase
     ) {}
 
     async ngOnInit() {
         this.presentingElement = document.querySelector(".page-content");
         await this.loadTasks();
+    }
+
+    ionViewDidEnter() {
+        if (this.viewport) {
+            this.viewport.checkViewportSize();
+        }
     }
 
     private async loadTasks() {
@@ -84,7 +94,7 @@ export class TodosPage implements OnInit {
         }
     }
 
-    async confirmDeleteTask(taskId: string) {
+    async confirmDeleteTask(taskId: string, modal?: HTMLIonModalElement) {
         const alert = await this.alertController.create({
             header: "Confirmar eliminación",
             message: "¿Estás seguro de que deseas eliminar esta tarea?",
@@ -97,7 +107,10 @@ export class TodosPage implements OnInit {
                 {
                     text: "Eliminar",
                     role: "confirm",
-                    handler: () => {
+                    handler: async () => {
+                        if (modal) {
+                            await modal.dismiss();
+                        }
                         this.onDeleteTask(taskId);
                     }
                 }
@@ -124,26 +137,43 @@ export class TodosPage implements OnInit {
         }
     }
 
-    ionViewDidEnter() {
-        if (this.viewport) {
-            this.viewport.checkViewportSize();
-        }
-    }
+    async openModal(taskToEdit?: Task) {
+        const modal = this.modalController.create({
+            component: TodoCreationFormComponent,
+            componentProps: {
+                taskToEdit: taskToEdit,
+                confirmDeleteTask: async () => {
+                    if (taskToEdit?.id) {
+                        this.confirmDeleteTask(taskToEdit.id, await modal);
+                    }
+                }
+            }
+        });
 
-    async onModalDismiss(event: any) {
-        const { role, data } = event.detail;
+        (await modal).present();
+
+        const { data, role } = await (await modal).onDidDismiss();
+
+        if (role === "delete" && data?.id) {
+            this.confirmDeleteTask(data.id);
+            return;
+        }
 
         if (role === "confirm" && data) {
-            try {
-                const newTask = await this.createTaskUseCase.execute({
-                    name: data.name,
-                    description: data.description,
-                    categoryId: data.categoryId
+            if (taskToEdit) {
+                await this.updateTaskUseCase.execute(data);
+                this.tasks = this.tasks.map((t) => (t.id === data.id ? data : t));
+
+                const toast = await this.toastController.create({
+                    message: "Tarea actualizada exitosamente",
+                    positionAnchor: "task-fab",
+                    duration: 2000
                 });
 
+                await toast.present();
+            } else {
+                const newTask = await this.createTaskUseCase.execute(data);
                 this.tasks = [...this.tasks, newTask];
-
-                setTimeout(() => this.viewport?.checkViewportSize(), 50);
 
                 const toast = await this.toastController.create({
                     message: "Tarea creada exitosamente",
@@ -152,9 +182,8 @@ export class TodosPage implements OnInit {
                 });
 
                 await toast.present();
-            } catch (error) {
-                console.error("Error al intentar agregar tarea: ", error);
             }
+            setTimeout(() => this.viewport?.checkViewportSize(), 50);
         }
     }
 }

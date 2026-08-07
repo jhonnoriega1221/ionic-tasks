@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
     IonButton,
@@ -18,6 +18,7 @@ import {
     ModalController,
     IonFooter
 } from "@ionic/angular/standalone";
+import { Task } from "../../../domain/models/task.model";
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 @Component({
@@ -45,7 +46,11 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angula
     ]
 })
 export class TodoCreationFormComponent implements OnInit {
+    @Input() taskToEdit?: Task;
+    @Output() confirmDeleteTask?: () => void;
+
     todoForm!: FormGroup;
+    isEditing = false;
 
     constructor(
         private fb: FormBuilder,
@@ -53,10 +58,12 @@ export class TodoCreationFormComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        this.isEditing = !!this.taskToEdit;
+
         this.todoForm = this.fb.group({
-            name: ["", [Validators.required]],
-            description: ["", [Validators.required]],
-            categoryId: [""]
+            name: [this.taskToEdit?.name || "", [Validators.required]],
+            description: [this.taskToEdit?.description || "", [Validators.required]],
+            categoryId: [this.taskToEdit?.categoryId || ""]
         });
     }
 
@@ -66,9 +73,19 @@ export class TodoCreationFormComponent implements OnInit {
 
     onSubmit() {
         if (this.todoForm.valid) {
-            this.modalCtrl.dismiss(this.todoForm.value, "confirm");
+            const resultData = this.isEditing
+                ? { ...this.taskToEdit, ...this.todoForm.value }
+                : this.todoForm.value;
+
+            this.modalCtrl.dismiss(resultData, "confirm");
         } else {
             this.todoForm.markAllAsTouched();
+        }
+    }
+
+    onDeleteClicked() {
+        if (this.confirmDeleteTask) {
+            this.confirmDeleteTask();
         }
     }
 }

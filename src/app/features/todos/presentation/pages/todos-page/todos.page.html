@@ -12,7 +12,7 @@
         >
             <ion-list class="ion-padding-bottom">
                 <ion-item-sliding #slidingItem *cdkVirtualFor="let task of tasks">
-                    <ion-item button>
+                    <ion-item button (click)="openModal(task)">
                         <ion-checkbox slot="start" [aria-label]="task.completed"></ion-checkbox>
                         <ion-label> {{ task.name }} </ion-label>
                     </ion-item>
@@ -37,14 +37,9 @@
     }
 
     <ion-fab id="task-fab" horizontal="end" vertical="bottom" slot="fixed">
-        <ion-fab-button id="open-modal">
+        <ion-fab-button (click)="openModal()">
             <ion-icon name="add"></ion-icon>
         </ion-fab-button>
     </ion-fab>
 
-    <ion-modal #modal trigger="open-modal" (ionModalDidDismiss)="onModalDismiss($event)">
-        <ng-template>
-            <app-todo-creation-form class="ion-page" />
-        </ng-template>
-    </ion-modal>
 </ion-content>

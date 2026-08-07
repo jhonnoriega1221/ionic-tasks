@@ -27,9 +27,8 @@ export class TaskStorageRepository implements TaskRepository {
         return await this.storage.get<Task>(this.STORE_NAME, id);
     }
 
-    async updateTask(todo: Task): Promise<void> {
-        // En bases de datos Key-Value, sobrescribir la misma key actualiza el valor
-        await this.storage.set(this.STORE_NAME, todo.id, todo);
+    async updateTask(id:string, task: Task): Promise<void> {
+        await this.storage.set(this.STORE_NAME, id, task);
     }
 
     async deleteTask(id: string): Promise<void> {
