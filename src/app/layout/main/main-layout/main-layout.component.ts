@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { IonIcon, IonTabBar, IonTabButton, IonTabs } from "@ionic/angular/standalone";
 
 import { addIcons } from "ionicons";
-import { list, copy, settings, add, trash } from "ionicons/icons";
+import { list, copy, settings, add, trash, alertCircleOutline, warningOutline } from "ionicons/icons";
 
 @Component({
     selector: "app-main-layout",
@@ -12,7 +12,7 @@ import { list, copy, settings, add, trash } from "ionicons/icons";
 })
 export class MainLayoutComponent implements OnInit {
     constructor() {
-        addIcons({ list, copy, settings, add, trash });
+        addIcons({ list, copy, settings, add, trash, alertCircleOutline });
     }
 
     ngOnInit() {}

@@ -1,0 +1,26 @@
+<div class="data-state" [ngClass]="'data-state--' + variant">
+    @if (icon) {
+        <div class="data-state__icon">
+            <ion-icon [name]="icon" aria-hidden="true" />
+        </div>
+    }
+
+    <div class="data-state__content">
+        @if (title) {
+            <h2 class="data-state__title">{{ title }}</h2>
+        }
+
+        @if (subtitle) {
+            <p class="data-state__subtitle">{{ subtitle }}</p>
+        }
+    </div>
+
+    <ion-button
+        *ngIf="showButton"
+        expand="block"
+        [color]="buttonColor"
+        (click)="handleButtonClick()"
+    >
+        {{ buttonLabel || "Continuar" }}
+    </ion-button>
+</div>

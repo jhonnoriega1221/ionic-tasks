@@ -22,7 +22,7 @@ import { CreateTaskUseCase } from "../../../domain/usecases/create-task.usecase"
 import { Task } from "../../../domain/models/task.model";
 import { GetTasksUseCase } from "../../../domain/usecases/get-tasks.usecase";
 import { DeleteTasksUseCase } from "../../../domain/usecases/delete-task.usecase";
-
+import { DataStateComponent } from "src/app/shared/components/data-state/data-state.component";
 @Component({
     selector: "app-todos",
     templateUrl: "./todos.page.html",
@@ -45,7 +45,8 @@ import { DeleteTasksUseCase } from "../../../domain/usecases/delete-task.usecase
         IonToolbar,
         IonFab,
         IonCheckbox,
-        TodoCreationFormComponent
+        TodoCreationFormComponent,
+        DataStateComponent
     ]
 })
 export class TodosPage implements OnInit {
