@@ -27,7 +27,7 @@ export class TaskStorageRepository implements TaskRepository {
         return await this.storage.get<Task>(this.STORE_NAME, id);
     }
 
-    async updateTask(id:string, task: Task): Promise<void> {
+    async updateTask(id: string, task: Task): Promise<void> {
         await this.storage.set(this.STORE_NAME, id, task);
     }
 

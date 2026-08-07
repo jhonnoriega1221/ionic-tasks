@@ -1,14 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 
 @Component({
-  selector: 'app-todos-list-item',
-  templateUrl: './todos-list-item.component.html',
-  styleUrls: ['./todos-list-item.component.scss'],
+    selector: "app-todos-list-item",
+    templateUrl: "./todos-list-item.component.html",
+    styleUrls: ["./todos-list-item.component.scss"]
 })
-export class TodosListItemComponent  implements OnInit {
+export class TodosListItemComponent implements OnInit {
+    constructor() {}
 
-  constructor() { }
-
-  ngOnInit() {}
-
+    ngOnInit() {}
 }

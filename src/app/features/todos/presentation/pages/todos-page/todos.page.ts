@@ -14,11 +14,7 @@ import {
     IonItemOptions,
     IonItemSliding,
     IonCheckbox,
-    IonModal,
-    IonToast,
     ToastController,
-    IonAlert,
-    IonButton,
     AlertController,
     ModalController
 } from "@ionic/angular/standalone";
@@ -36,10 +32,6 @@ import { UpdateTaskUseCase } from "../../../domain/usecases/update-task.usecase"
     styleUrls: ["./todos.page.scss"],
     standalone: true,
     imports: [
-        IonButton,
-        IonAlert,
-        IonToast,
-        IonModal,
         ScrollingModule,
         IonItemSliding,
         IonItemOptions,
@@ -55,7 +47,6 @@ import { UpdateTaskUseCase } from "../../../domain/usecases/update-task.usecase"
         IonToolbar,
         IonFab,
         IonCheckbox,
-        TodoCreationFormComponent,
         DataStateComponent
     ]
 })
