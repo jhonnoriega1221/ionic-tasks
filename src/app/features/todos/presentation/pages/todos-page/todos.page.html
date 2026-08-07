@@ -13,7 +13,12 @@
             <ion-list class="ion-padding-bottom">
                 <ion-item-sliding #slidingItem *cdkVirtualFor="let task of tasks">
                     <ion-item button (click)="openModal(task)">
-                        <ion-checkbox slot="start" [aria-label]="task.completed"></ion-checkbox>
+                        <ion-checkbox
+                            slot="start"
+                            [checked]="task.completed"
+                            (click)="$event.stopPropagation()"
+                            (ionChange)="onToggleComplete(task, $event)"
+                        />
                         <ion-label> {{ task.name }} </ion-label>
                     </ion-item>
                     <ion-item-options side="end">

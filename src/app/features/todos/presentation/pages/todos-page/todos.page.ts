@@ -85,6 +85,30 @@ export class TodosPage implements OnInit {
         }
     }
 
+    async onToggleComplete(task: Task, event: any) {
+        const isCompleted = event.detail.checked;
+
+        if (task.completed === isCompleted) return;
+
+        const updatedTask = { ...task, completed: isCompleted };
+
+        this.tasks = this.tasks.map((t) => (t.id === task.id ? updatedTask : t));
+
+        try {
+            await this.updateTaskUseCase.execute(updatedTask);
+        } catch (error) {
+            console.error("Error al actualizar el estado de la tarea:", error);
+            this.tasks = this.tasks.map((t) => (t.id === task.id ? task : t));
+
+            const toast = await this.toastController.create({
+                message: "Error al guardar los cambios",
+                duration: 2000,
+                color: "danger"
+            });
+            await toast.present();
+        }
+    }
+
     async confirmDeleteTask(taskId: string, modal?: HTMLIonModalElement) {
         const alert = await this.alertController.create({
             header: "Confirmar eliminación",
