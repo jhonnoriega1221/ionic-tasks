@@ -16,7 +16,10 @@ import {
     IonCheckbox,
     IonModal,
     IonToast,
-    ToastController
+    ToastController,
+    IonAlert,
+    IonButton,
+    AlertController
 } from "@ionic/angular/standalone";
 import { CdkVirtualScrollViewport, ScrollingModule } from "@angular/cdk/scrolling";
 import { TodoCreationFormComponent } from "../../components/todo-creation-form/todo-creation-form.component";
@@ -31,6 +34,8 @@ import { DataStateComponent } from "src/app/shared/components/data-state/data-st
     styleUrls: ["./todos.page.scss"],
     standalone: true,
     imports: [
+        IonButton,
+        IonAlert,
         IonToast,
         IonModal,
         ScrollingModule,
@@ -60,6 +65,7 @@ export class TodosPage implements OnInit {
 
     constructor(
         private toastController: ToastController,
+        private alertController: AlertController,
         private createTaskUseCase: CreateTaskUseCase,
         private getAllTasksUseCase: GetTasksUseCase,
         private deleteTaskUseCase: DeleteTasksUseCase
@@ -76,6 +82,29 @@ export class TodosPage implements OnInit {
         } catch (error) {
             console.error("Error al cargar las tareas: ", error);
         }
+    }
+
+    async confirmDeleteTask(taskId: string) {
+        const alert = await this.alertController.create({
+            header: "Confirmar eliminación",
+            message: "¿Estás seguro de que deseas eliminar esta tarea?",
+            buttons: [
+                {
+                    text: "Cancelar",
+                    role: "cancel",
+                    cssClass: "secondary"
+                },
+                {
+                    text: "Eliminar",
+                    role: "confirm",
+                    handler: () => {
+                        this.onDeleteTask(taskId);
+                    }
+                }
+            ]
+        });
+
+        await alert.present();
     }
 
     async onDeleteTask(taskId: string) {
