@@ -5,41 +5,58 @@ import { Storage } from "@ionic/storage-angular";
     providedIn: "root"
 })
 export class StorageService {
-    private _storage: Storage | null = null;
-    private storagePromise: Promise<Storage> | null = null;
+    private stores: { [storeName: string]: Storage } = {};
+    private promises: { [storeName: string]: Promise<Storage> } = {};
 
-    constructor(private storage: Storage) {}
+    constructor() {}
 
-    async ensureStorage(): Promise<Storage> {
-        if (this._storage !== null) {
-            return this._storage;
+    async ensureStorage(storeName: string): Promise<Storage> {
+        if (this.stores[storeName]) {
+            return this.stores[storeName];
         }
 
-        if (!this.storagePromise) {
-            this.storagePromise = this.storage.create();
+        if (!this.promises[storeName]) {
+            this.promises[storeName] = this.initStore(storeName);
         }
 
-        this._storage = await this.storagePromise;
-        return this._storage;
+        this.stores[storeName] = await this.promises[storeName];
+        return this.stores[storeName];
     }
 
-    public async set<T>(key: string, value: T): Promise<void> {
-        const storage = await this.ensureStorage();
+    private async initStore(storeName: string): Promise<Storage> {
+        const store = new Storage({
+            name: "__tododb",
+            storeName: storeName
+        });
+        await store.create();
+        return store;
+    }
+
+    public async set<T>(storeName: string, key: string, value: T): Promise<void> {
+        const storage = await this.ensureStorage(storeName);
         await storage.set(key, value);
     }
 
-    public async get<T>(key: string): Promise<T | null> {
-        const storage = await this.ensureStorage();
+    public async get<T>(storeName: string, key: string): Promise<T | null> {
+        const storage = await this.ensureStorage(storeName);
         return await storage.get(key);
     }
 
-    public async remove(key: string): Promise<void> {
-        const storage = await this.ensureStorage();
+    public async remove(storeName: string, key: string): Promise<void> {
+        const storage = await this.ensureStorage(storeName);
         await storage.remove(key);
     }
 
-    public async clear(): Promise<void> {
-        const storage = await this.ensureStorage();
+    public async clear(storeName: string): Promise<void> {
+        const storage = await this.ensureStorage(storeName);
         await storage.clear();
+    }
+
+    public async forEach<T>(
+        storeName: string,
+        callback: (value: T, key: string, iterationNumber: Number) => void
+    ): Promise<void> {
+        const storage = await this.ensureStorage(storeName);
+        await storage.forEach(callback);
     }
 }
