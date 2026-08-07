@@ -38,10 +38,21 @@
                         interface="popover"
                     >
                         <ion-select-option value="">Sin categoría</ion-select-option>
+
+                        @for (category of categories; track category.id) {
+                            <ion-select-option [value]="category.id">
+                                {{ category.name }}
+                            </ion-select-option>
+                        }
                     </ion-select>
                 </ion-col>
                 <ion-col size="2" class="ion-text-center">
-                    <ion-button fill="clear" shape="round" size="large">
+                    <ion-button
+                        fill="clear"
+                        shape="round"
+                        size="large"
+                        (click)="openCategoryModal()"
+                    >
                         <ion-icon slot="icon-only" name="add" />
                     </ion-button>
                 </ion-col>
@@ -60,7 +71,6 @@
                         fill="outline"
                         color="danger"
                         (click)="onDeleteClicked()"
-                        [disabled]="todoForm.invalid"
                     >
                         <ion-icon name="trash" />
                     </ion-button>

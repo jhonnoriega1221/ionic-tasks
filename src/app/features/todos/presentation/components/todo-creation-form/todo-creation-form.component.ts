@@ -20,6 +20,10 @@ import {
 } from "@ionic/angular/standalone";
 import { Task } from "../../../domain/models/task.model";
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Category } from "src/app/features/categories/domain/models/category.model";
+import { GetCategoriesUseCase } from "src/app/features/categories/domain/usecases/get-categories.usecase";
+import { CategoryCreationFormComponent } from "src/app/features/categories/presentation/components/category-creation-form/category-creation-form.component";
+import { CreateCategoryUseCase } from "src/app/features/categories/domain/usecases/create-category.usecase";
 
 @Component({
     selector: "app-todo-creation-form",
@@ -52,12 +56,16 @@ export class TodoCreationFormComponent implements OnInit {
     todoForm!: FormGroup;
     isEditing = false;
 
+    categories: Category[] = [];
+
     constructor(
         private fb: FormBuilder,
-        private modalCtrl: ModalController
+        private modalCtrl: ModalController,
+        private getCategoriesUseCase: GetCategoriesUseCase,
+        private createCategoryUseCase: CreateCategoryUseCase
     ) {}
 
-    ngOnInit() {
+    async ngOnInit() {
         this.isEditing = !!this.taskToEdit;
 
         this.todoForm = this.fb.group({
@@ -65,10 +73,42 @@ export class TodoCreationFormComponent implements OnInit {
             description: [this.taskToEdit?.description || "", [Validators.required]],
             categoryId: [this.taskToEdit?.categoryId || ""]
         });
+
+        await this.loadCategories();
+    }
+
+    async loadCategories() {
+        try {
+            this.categories = await this.getCategoriesUseCase.execute();
+        } catch (error) {
+            console.error("Error al cargar categorías:", error);
+        }
     }
 
     dismiss() {
         this.modalCtrl.dismiss();
+    }
+
+    async openCategoryModal() {
+        const modal = await this.modalCtrl.create({
+            component: CategoryCreationFormComponent
+        });
+
+        await modal.present();
+
+        const { data, role } = await modal.onDidDismiss();
+
+        if (role === "confirm" && data) {
+            try {
+                const newCategory = await this.createCategoryUseCase.execute(data);
+                this.categories = [...this.categories, newCategory];
+                this.todoForm.patchValue({
+                    categoryId: newCategory.id
+                });
+            } catch (error) {
+                console.error("Hubo error al crear categoría: ", error)
+            }
+        }
     }
 
     onSubmit() {

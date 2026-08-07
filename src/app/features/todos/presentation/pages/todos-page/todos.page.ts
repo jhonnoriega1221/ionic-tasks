@@ -16,7 +16,10 @@ import {
     IonCheckbox,
     ToastController,
     AlertController,
-    ModalController
+    ModalController,
+    IonReorderGroup,
+    IonReorder,
+    ItemReorderEventDetail
 } from "@ionic/angular/standalone";
 import { CdkVirtualScrollViewport, ScrollingModule } from "@angular/cdk/scrolling";
 import { TodoCreationFormComponent } from "../../components/todo-creation-form/todo-creation-form.component";
@@ -32,6 +35,8 @@ import { UpdateTaskUseCase } from "../../../domain/usecases/update-task.usecase"
     styleUrls: ["./todos.page.scss"],
     standalone: true,
     imports: [
+        IonReorder,
+        IonReorderGroup,
         ScrollingModule,
         IonItemSliding,
         IonItemOptions,
@@ -68,6 +73,9 @@ export class TodosPage implements OnInit {
 
     async ngOnInit() {
         this.presentingElement = document.querySelector(".page-content");
+    }
+
+    async ionViewWillEnter() {
         await this.loadTasks();
     }
 
@@ -188,7 +196,7 @@ export class TodosPage implements OnInit {
                 await toast.present();
             } else {
                 const newTask = await this.createTaskUseCase.execute(data);
-                this.tasks = [...this.tasks, newTask];
+                this.tasks = [newTask, ...this.tasks];
 
                 const toast = await this.toastController.create({
                     message: "Tarea creada exitosamente",

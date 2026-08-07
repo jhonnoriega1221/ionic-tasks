@@ -20,7 +20,8 @@ export class TaskStorageRepository implements TaskRepository {
         await this.storage.forEach(this.STORE_NAME, (value: Task) => {
             todos.push(value);
         });
-        return todos;
+
+        return todos.sort((a, b) => (a.order || 0) - (b.order || 0));
     }
 
     async getTaskById(id: string): Promise<Task | null> {

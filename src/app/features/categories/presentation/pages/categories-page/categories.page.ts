@@ -67,6 +67,9 @@ export class CategoriesPage implements OnInit {
 
     async ngOnInit() {
         this.presentingElement = document.querySelector(".page-content");
+    }
+
+    async ionViewWillEnter() {
         await this.loadCategories();
     }
 
