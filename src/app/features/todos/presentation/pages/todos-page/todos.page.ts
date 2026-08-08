@@ -243,6 +243,8 @@ export class TodosPage implements OnInit {
     async openModal(taskToEdit?: Task) {
         const modal = this.modalController.create({
             component: TodoCreationFormComponent,
+            breakpoints: [0, 0.8],
+            initialBreakpoint: 0.8,
             componentProps: {
                 taskToEdit: taskToEdit,
                 confirmDeleteTask: async () => {

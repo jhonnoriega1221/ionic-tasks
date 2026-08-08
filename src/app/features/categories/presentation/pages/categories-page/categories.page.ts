@@ -133,6 +133,8 @@ export class CategoriesPage implements OnInit {
     async openModal(categoryToEdit?: Category) {
         const modal = this.modalController.create({
             component: CategoryCreationFormComponent,
+            breakpoints: [0, 0.5],
+            initialBreakpoint: 0.5,
             componentProps: {
                 categoryToEdit: categoryToEdit,
                 confirmDeleteCategory: async () => {

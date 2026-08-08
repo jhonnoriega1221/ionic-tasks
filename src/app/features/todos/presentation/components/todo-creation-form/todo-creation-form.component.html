@@ -1,9 +1,8 @@
 <ion-header>
     <ion-toolbar>
-        <ion-title>{{ isEditing ? "Editar tarea" : "Nueva tarea" }}</ion-title>
-        <ion-buttons slot="end">
-            <ion-button [strong]="true" (click)="dismiss()">Cerrar</ion-button>
-        </ion-buttons>
+        <ion-title style="text-align: center">{{
+            isEditing ? "Editar tarea" : "Nueva tarea"
+        }}</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
@@ -15,6 +14,7 @@
             fill="outline"
             errorText="El nombre es obligatorio"
             class="ion-margin-bottom"
+            mode="md"
         />
 
         <ion-textarea
@@ -25,6 +25,7 @@
             rows="6"
             errorText="La descripción es obligatoria"
             class="ion-margin-bottom"
+            mode="md"
         />
 
         <ion-grid class="ion-no-padding">
@@ -36,6 +37,7 @@
                         labelPlacement="floating"
                         fill="outline"
                         interface="popover"
+                        mode="md"
                     >
                         <ion-select-option value="">Sin categoría</ion-select-option>
 
@@ -52,43 +54,47 @@
                         shape="round"
                         size="large"
                         (click)="openCategoryModal()"
+                        mode="md"
                     >
                         <ion-icon slot="icon-only" name="add" />
                     </ion-button>
                 </ion-col>
             </ion-row>
         </ion-grid>
+        @if (isEditing) {
+            <ion-grid style="margin-top: 80px">
+                <ion-row>
+                    <ion-col size="2">
+                        <ion-button
+                            type="button"
+                            expand="block"
+                            fill="clear"
+                            color="danger"
+                            (click)="onDeleteClicked()"
+                        >
+                            <ion-icon name="trash" slot="icon-only" />
+                        </ion-button>
+                    </ion-col>
+                    <ion-col size="10"
+                        ><ion-button
+                            type="submit"
+                            form="todoForm"
+                            expand="block"
+                            [disabled]="todoForm.invalid"
+                            >Actualizar tarea</ion-button
+                        ></ion-col
+                    >
+                </ion-row>
+            </ion-grid>
+        } @else {
+            <ion-button
+                style="margin-top: 80px"
+                type="submit"
+                form="todoForm"
+                expand="block"
+                [disabled]="todoForm.invalid"
+                >Crear tarea</ion-button
+            >
+        }
     </form>
 </ion-content>
-<ion-footer class="ion-padding">
-    @if (isEditing) {
-        <ion-grid>
-            <ion-row>
-                <ion-col size="2">
-                    <ion-button
-                        type="button"
-                        expand="block"
-                        fill="clear"
-                        color="danger"
-                        (click)="onDeleteClicked()"
-                    >
-                        <ion-icon name="trash" slot="icon-only" size="large" />
-                    </ion-button>
-                </ion-col>
-                <ion-col size="10"
-                    ><ion-button
-                        type="submit"
-                        form="todoForm"
-                        expand="block"
-                        [disabled]="todoForm.invalid"
-                        >Actualizar tarea</ion-button
-                    ></ion-col
-                >
-            </ion-row>
-        </ion-grid>
-    } @else {
-        <ion-button type="submit" form="todoForm" expand="block" [disabled]="todoForm.invalid"
-            >Crear tarea</ion-button
-        >
-    }
-</ion-footer>

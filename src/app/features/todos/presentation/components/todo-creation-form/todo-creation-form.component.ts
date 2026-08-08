@@ -60,7 +60,7 @@ export class TodoCreationFormComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
-        private modalCtrl: ModalController,
+        private modalController: ModalController,
         private getCategoriesUseCase: GetCategoriesUseCase,
         private createCategoryUseCase: CreateCategoryUseCase
     ) {}
@@ -86,12 +86,14 @@ export class TodoCreationFormComponent implements OnInit {
     }
 
     dismiss() {
-        this.modalCtrl.dismiss();
+        this.modalController.dismiss();
     }
 
     async openCategoryModal() {
-        const modal = await this.modalCtrl.create({
-            component: CategoryCreationFormComponent
+        const modal = await this.modalController.create({
+            component: CategoryCreationFormComponent,
+            breakpoints: [0, 0.5],
+            initialBreakpoint: 0.5
         });
 
         await modal.present();
@@ -117,7 +119,7 @@ export class TodoCreationFormComponent implements OnInit {
                 ? { ...this.taskToEdit, ...this.todoForm.value }
                 : this.todoForm.value;
 
-            this.modalCtrl.dismiss(resultData, "confirm");
+            this.modalController.dismiss(resultData, "confirm");
         } else {
             this.todoForm.markAllAsTouched();
         }
