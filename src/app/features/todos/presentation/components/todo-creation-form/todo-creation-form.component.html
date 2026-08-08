@@ -1,6 +1,6 @@
 <ion-header>
     <ion-toolbar>
-        <ion-title>Nueva tarea</ion-title>
+        <ion-title>{{ isEditing ? "Editar tarea" : "Nueva tarea" }}</ion-title>
         <ion-buttons slot="end">
             <ion-button [strong]="true" (click)="dismiss()">Cerrar</ion-button>
         </ion-buttons>
