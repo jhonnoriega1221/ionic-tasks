@@ -1,18 +1,40 @@
-<ion-header [translucent]="true">
+<ion-header>
     <ion-toolbar>
-        <ion-title>Tareas</ion-title>
+        <ion-title>Mis Tareas</ion-title>
+
+        <ion-buttons slot="end">
+            <ion-button (click)="presentCategoryFilter($event)">
+                <ion-icon slot="icon-only" name="filter-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
     </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" [scrollY]="false">
-    @if (tasks.length > 0) {
+    @if (selectedCategoryId) {
+        <ion-item color="light" lines="full" class="ion-margin-vertical ion-padding-horizontal">
+            <ion-label class="ion-text-wrap">
+                <small
+                    >Filtro seleccionado:
+                    <strong>{{ getCategoryName(selectedCategoryId) }}</strong></small
+                >
+            </ion-label>
+            <ion-button fill="clear" size="small" color="medium" (click)="clearFilter()">
+                Borrar filtro
+            </ion-button>
+        </ion-item>
+    }
+    @if (filteredTasks.length > 0 && tasks.length > 0) {
         <cdk-virtual-scroll-viewport
             itemSize="49"
             style="height: 100%; width: 100%; display: block"
         >
             <ion-list class="ion-padding-bottom">
-                <ion-reorder-group [disabled]="false" (ionItemReorder)="onReorder($event)">
-                    <ion-item-sliding #slidingItem *cdkVirtualFor="let task of tasks">
+                <ion-reorder-group
+                    [disabled]="!!selectedCategoryId"
+                    (ionItemReorder)="onReorder($event)"
+                >
+                    <ion-item-sliding #slidingItem *cdkVirtualFor="let task of filteredTasks">
                         <ion-item button (click)="openModal(task)">
                             <ion-checkbox
                                 slot="start"
@@ -23,20 +45,15 @@
                             <ion-label> {{ task.name }} </ion-label>
                             <ion-reorder slot="end" />
                         </ion-item>
-                        <ion-item-options side="end">
-                            <ion-item-option
-                                (click)="confirmDeleteTask(task.id)"
-                                color="danger"
-                                expandable
-                            >
-                                <ion-icon name="trash"></ion-icon>
-                                <span slot="bottom">Eliminar</span>
-                            </ion-item-option>
-                        </ion-item-options>
                     </ion-item-sliding>
                 </ion-reorder-group>
             </ion-list>
         </cdk-virtual-scroll-viewport>
+    } @else if (filteredTasks.length === 0 && tasks.length > 0) {
+        <app-data-state
+            icon="alert-circle-outline"
+            title="No hay tareas con este filtro, elimine el filtro o cree una tarea para este filtro"
+        />
     } @else {
         <app-data-state
             icon="alert-circle-outline"

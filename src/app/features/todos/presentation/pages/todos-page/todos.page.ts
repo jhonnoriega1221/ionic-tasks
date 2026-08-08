@@ -10,8 +10,6 @@ import {
     IonList,
     IonItem,
     IonLabel,
-    IonItemOption,
-    IonItemOptions,
     IonItemSliding,
     IonCheckbox,
     ToastController,
@@ -19,7 +17,10 @@ import {
     ModalController,
     IonReorderGroup,
     IonReorder,
-    ItemReorderEventDetail
+    ItemReorderEventDetail,
+    IonButtons,
+    IonButton,
+    PopoverController
 } from "@ionic/angular/standalone";
 import { CdkVirtualScrollViewport, ScrollingModule } from "@angular/cdk/scrolling";
 import { TodoCreationFormComponent } from "../../components/todo-creation-form/todo-creation-form.component";
@@ -30,18 +31,21 @@ import { DeleteTasksUseCase } from "../../../domain/usecases/delete-task.usecase
 import { DataStateComponent } from "src/app/shared/components/data-state/data-state.component";
 import { UpdateTaskUseCase } from "../../../domain/usecases/update-task.usecase";
 import { UpdateMultipleTaskUseCase } from "../../../domain/usecases/update-multiple-tasks.usecase";
+import { Category } from "src/app/features/categories/domain/models/category.model";
+import { GetCategoriesUseCase } from "src/app/features/categories/domain/usecases/get-categories.usecase";
+import { CategoryFilterPopoverComponent } from "../../components/category-filter-popover/category-filter-popover.component";
 @Component({
     selector: "app-todos",
     templateUrl: "./todos.page.html",
     styleUrls: ["./todos.page.scss"],
     standalone: true,
     imports: [
+        IonButton,
+        IonButtons,
         IonReorder,
         IonReorderGroup,
         ScrollingModule,
         IonItemSliding,
-        IonItemOptions,
-        IonItemOption,
         IonLabel,
         IonItem,
         IonList,
@@ -61,13 +65,18 @@ export class TodosPage implements OnInit {
     presentingElement!: HTMLElement | null;
 
     tasks: Task[] = [];
+    filteredTasks: Task[] = [];
+    selectedCategoryId: string | null = null;
+    categories: Category[] = [];
 
     constructor(
         private toastController: ToastController,
         private alertController: AlertController,
         private modalController: ModalController,
+        private popoverController: PopoverController,
         private createTaskUseCase: CreateTaskUseCase,
         private getAllTasksUseCase: GetTasksUseCase,
+        private getAllCategoriesUseCase: GetCategoriesUseCase,
         private deleteTaskUseCase: DeleteTasksUseCase,
         private updateTaskUseCase: UpdateTaskUseCase,
         private updateMultipleTaskUseCase: UpdateMultipleTaskUseCase
@@ -78,6 +87,7 @@ export class TodosPage implements OnInit {
     }
 
     async ionViewWillEnter() {
+        await this.loadCategories();
         await this.loadTasks();
     }
 
@@ -87,12 +97,63 @@ export class TodosPage implements OnInit {
         }
     }
 
+    getCategoryName(categoryId: string): string {
+        const category = this.categories.find((c) => c.id === categoryId);
+        return category ? category.name : "Desconocida";
+    }
+
     private async loadTasks() {
         try {
             this.tasks = await this.getAllTasksUseCase.execute();
+            this.filteredTasks = this.tasks;
         } catch (error) {
             console.error("Error al cargar las tareas: ", error);
         }
+    }
+
+    private async loadCategories() {
+        try {
+            this.categories = await this.getAllCategoriesUseCase.execute();
+        } catch (error) {
+            console.error("Error al cargar las categorías: ", error);
+        }
+    }
+
+    async presentCategoryFilter(event: Event) {
+        const popover = await this.popoverController.create({
+            component: CategoryFilterPopoverComponent,
+            event: event,
+            componentProps: {
+                categories: this.categories,
+                selectedCategoryId: this.selectedCategoryId
+            }
+        });
+
+        await popover.present();
+
+        const { data } = await popover.onDidDismiss();
+
+        if (data !== undefined) {
+            this.selectedCategoryId = data;
+            this.applyFilter();
+        }
+    }
+
+    applyFilter() {
+        if (!this.selectedCategoryId) {
+            this.loadTasks();
+        } else {
+            this.filteredTasks = this.tasks.filter(
+                (task) => task.categoryId === this.selectedCategoryId
+            );
+        }
+
+        setTimeout(() => this.viewport?.checkViewportSize(), 50);
+    }
+
+    clearFilter() {
+        this.selectedCategoryId = "";
+        this.applyFilter();
     }
 
     async onReorder(event: CustomEvent<ItemReorderEventDetail>) {
@@ -117,12 +178,14 @@ export class TodosPage implements OnInit {
         const updatedTask = { ...task, completed: isCompleted };
 
         this.tasks = this.tasks.map((t) => (t.id === task.id ? updatedTask : t));
+        this.filteredTasks = this.filteredTasks.map((t) => (t.id === task.id ? updatedTask : t));
 
         try {
             await this.updateTaskUseCase.execute(updatedTask);
         } catch (error) {
             console.error("Error al actualizar el estado de la tarea:", error);
             this.tasks = this.tasks.map((t) => (t.id === task.id ? task : t));
+            this.filteredTasks = this.filteredTasks.map((t) => (t.id === task.id ? task : t));
 
             const toast = await this.toastController.create({
                 message: "Error al guardar los cambios",
@@ -164,6 +227,7 @@ export class TodosPage implements OnInit {
             await this.deleteTaskUseCase.execute(taskId);
 
             this.tasks = this.tasks.filter((t) => t.id !== taskId);
+            this.filteredTasks = this.filteredTasks.filter((t) => t.id !== taskId);
             const toast = await this.toastController.create({
                 message: "Tarea eliminada exitosamente",
                 positionAnchor: "task-fab",
@@ -202,6 +266,7 @@ export class TodosPage implements OnInit {
             if (taskToEdit) {
                 await this.updateTaskUseCase.execute(data);
                 this.tasks = this.tasks.map((t) => (t.id === data.id ? data : t));
+                this.filteredTasks = this.filteredTasks.map((t) => (t.id === data.id ? data : t));
 
                 const toast = await this.toastController.create({
                     message: "Tarea actualizada exitosamente",
@@ -213,6 +278,10 @@ export class TodosPage implements OnInit {
             } else {
                 const newTask = await this.createTaskUseCase.execute(data);
                 this.tasks = [newTask, ...this.tasks];
+
+                if (!this.selectedCategoryId || newTask.categoryId === this.selectedCategoryId) {
+                    this.filteredTasks = [newTask, ...this.filteredTasks];
+                }
 
                 const toast = await this.toastController.create({
                     message: "Tarea creada exitosamente",

@@ -9,7 +9,7 @@ import {
     add,
     trash,
     alertCircleOutline,
-    warningOutline
+    filterOutline
 } from "ionicons/icons";
 
 @Component({
@@ -20,7 +20,7 @@ import {
 })
 export class MainLayoutComponent implements OnInit {
     constructor() {
-        addIcons({ list, copy, settings, add, trash, alertCircleOutline });
+        addIcons({ list, copy, settings, add, trash, alertCircleOutline, filterOutline });
     }
 
     ngOnInit() {}
