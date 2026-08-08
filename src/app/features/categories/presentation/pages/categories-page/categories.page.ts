@@ -10,10 +10,6 @@ import {
     IonList,
     IonItem,
     IonLabel,
-    IonItemOption,
-    IonItemOptions,
-    IonItemSliding,
-    IonCheckbox,
     ToastController,
     AlertController,
     ModalController
@@ -33,9 +29,6 @@ import { CategoryCreationFormComponent } from "../../components/category-creatio
     standalone: true,
     imports: [
         ScrollingModule,
-        IonItemSliding,
-        IonItemOptions,
-        IonItemOption,
         IonLabel,
         IonItem,
         IonList,

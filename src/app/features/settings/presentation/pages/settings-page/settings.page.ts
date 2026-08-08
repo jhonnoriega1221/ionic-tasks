@@ -1,17 +1,28 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
-import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/angular/standalone";
+import { IonicModule } from "@ionic/angular";
+import { environment } from "../../../../../../environments/environment";
+import { ThemeService } from "src/app/core/theme.service";
 
 @Component({
     selector: "app-settings",
     templateUrl: "./settings.page.html",
-    styleUrls: ["./settings.page.scss"],
     standalone: true,
-    imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+    imports: [CommonModule, IonicModule]
 })
 export class SettingsPage implements OnInit {
-    constructor() {}
+    showAdvancedFeature = false;
+    isDarkMode = false;
+    appVersion = environment.version;
 
-    ngOnInit() {}
+    constructor(private themeService: ThemeService) {}
+
+    async ngOnInit() {
+        this.isDarkMode = await this.themeService.isDarkModeEnabled();
+    }
+
+    async toggleDarkMode(event: any) {
+        this.isDarkMode = event.detail.checked;
+        await this.themeService.setDarkMode(this.isDarkMode);
+    }
 }

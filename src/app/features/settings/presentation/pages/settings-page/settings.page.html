@@ -1,13 +1,38 @@
 <ion-header [translucent]="true">
     <ion-toolbar>
-        <ion-title>settings</ion-title>
+        <ion-title>Ajustes</ion-title>
     </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-    <ion-header collapse="condense">
-        <ion-toolbar>
-            <ion-title size="large">settings</ion-title>
-        </ion-toolbar>
-    </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+    <ion-list style="background-color: transparent">
+        <h5 style="margin-bottom: 12px">Apariencia</h5>
+        <ion-item lines="none">
+            <ion-icon slot="start" name="moon-outline"></ion-icon>
+            <ion-toggle [checked]="isDarkMode" (ionChange)="toggleDarkMode($event)">
+                Modo Oscuro
+            </ion-toggle>
+        </ion-item>
+    </ion-list>
+
+    <div class="ion-text-center ion-padding-top ion-margin-top" style="margin-top: 40px">
+        <div style="font-size: 5rem; line-height: 1">✅</div>
+        <h2 class="ion-margin-top">ionic-todo</h2>
+        <p>Versión {{ appVersion }}</p>
+
+        <p class="ion-text-wrap" style="margin-top: 3rem">
+            <ion-text color="medium">
+                <small>Jhon Noriega - 2026</small>
+            </ion-text>
+            <br () />
+            <ion-text color="medium">
+                <small
+                    >Codigo fuente disponible en
+                    <a href="https://github.com/jhonnoriega/ionic-todo" target="_blank"
+                        >GitHub</a
+                    ></small
+                >
+            </ion-text>
+        </p>
+    </div>
 </ion-content>
