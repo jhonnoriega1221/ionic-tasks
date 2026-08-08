@@ -7,18 +7,7 @@ import { Category } from "src/app/features/categories/domain/models/category.mod
     selector: "app-category-filter-popover",
     standalone: true,
     imports: [CommonModule, IonList, IonItem, IonLabel],
-    template: `
-        <ion-list>
-            <ion-item button (click)="selectCategory('')">
-                <ion-label>Todas las categorías</ion-label>
-            </ion-item>
-            @for (category of categories; track category.id) {
-                <ion-item button (click)="selectCategory(category.id)">
-                    <ion-label>{{ category.name }}</ion-label>
-                </ion-item>
-            }
-        </ion-list>
-    `
+    templateUrl: `./category-filter-popover.component.html`
 })
 export class CategoryFilterPopoverComponent {
     @Input() categories: Category[] = [];

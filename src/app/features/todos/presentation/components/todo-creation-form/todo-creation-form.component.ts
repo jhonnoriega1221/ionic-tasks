@@ -32,7 +32,6 @@ import { CreateCategoryUseCase } from "src/app/features/categories/domain/usecas
     imports: [
         CommonModule,
         ReactiveFormsModule,
-        IonButtons,
         IonTitle,
         IonToolbar,
         IonHeader,
@@ -45,8 +44,7 @@ import { CreateCategoryUseCase } from "src/app/features/categories/domain/usecas
         IonTextarea,
         IonButton,
         IonSelect,
-        IonSelectOption,
-        IonFooter
+        IonSelectOption
     ]
 })
 export class TodoCreationFormComponent implements OnInit {

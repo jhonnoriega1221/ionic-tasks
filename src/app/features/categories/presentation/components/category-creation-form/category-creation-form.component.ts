@@ -25,7 +25,6 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angula
     imports: [
         CommonModule,
         ReactiveFormsModule,
-        IonButtons,
         IonTitle,
         IonToolbar,
         IonHeader,
@@ -35,8 +34,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angula
         IonCol,
         IonIcon,
         IonInput,
-        IonButton,
-        IonFooter
+        IonButton
     ]
 })
 export class CategoryCreationFormComponent implements OnInit {
