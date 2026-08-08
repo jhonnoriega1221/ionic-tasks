@@ -87,7 +87,6 @@ export class TodosPage implements OnInit {
         this.presentingElement = document.querySelector(".page-content");
         this.showFilterButton =
             await this.remoteConfigService.isFeatureEnabled("enable_task_filter");
-        console.log("Feature flag 'show_filter_button' is set to:", this.showFilterButton);
     }
 
     async ionViewWillEnter() {
