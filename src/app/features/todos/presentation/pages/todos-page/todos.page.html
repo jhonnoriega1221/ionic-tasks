@@ -34,18 +34,20 @@
                     [disabled]="!!selectedCategoryId"
                     (ionItemReorder)="onReorder($event)"
                 >
-                    <ion-item-sliding #slidingItem *cdkVirtualFor="let task of filteredTasks">
-                        <ion-item button (click)="openModal(task)">
-                            <ion-checkbox
-                                slot="start"
-                                [checked]="task.completed"
-                                (click)="$event.stopPropagation()"
-                                (ionChange)="onToggleComplete(task, $event)"
-                            />
-                            <ion-label> {{ task.name }} </ion-label>
-                            <ion-reorder slot="end" />
-                        </ion-item>
-                    </ion-item-sliding>
+                    <ion-item
+                        *cdkVirtualFor="let task of filteredTasks"
+                        button
+                        (click)="openModal(task)"
+                    >
+                        <ion-checkbox
+                            slot="start"
+                            [checked]="task.completed"
+                            (click)="$event.stopPropagation()"
+                            (ionChange)="onToggleComplete(task, $event)"
+                        />
+                        <ion-label> {{ task.name }} </ion-label>
+                        <ion-reorder slot="end" />
+                    </ion-item>
                 </ion-reorder-group>
             </ion-list>
         </cdk-virtual-scroll-viewport>
