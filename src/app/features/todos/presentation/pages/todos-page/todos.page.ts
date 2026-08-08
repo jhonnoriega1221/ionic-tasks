@@ -33,6 +33,7 @@ import { UpdateMultipleTaskUseCase } from "../../../domain/usecases/update-multi
 import { Category } from "src/app/features/categories/domain/models/category.model";
 import { GetCategoriesUseCase } from "src/app/features/categories/domain/usecases/get-categories.usecase";
 import { CategoryFilterPopoverComponent } from "../../components/category-filter-popover/category-filter-popover.component";
+import { FirebaseRemoteConfigService } from "src/app/core/firebase-remote-config.service";
 @Component({
     selector: "app-todos",
     templateUrl: "./todos.page.html",
@@ -66,8 +67,10 @@ export class TodosPage implements OnInit {
     filteredTasks: Task[] = [];
     selectedCategoryId: string | null = null;
     categories: Category[] = [];
+    showFilterButton: boolean = false;
 
     constructor(
+        private remoteConfigService: FirebaseRemoteConfigService,
         private toastController: ToastController,
         private alertController: AlertController,
         private modalController: ModalController,
@@ -82,6 +85,9 @@ export class TodosPage implements OnInit {
 
     async ngOnInit() {
         this.presentingElement = document.querySelector(".page-content");
+        this.showFilterButton =
+            await this.remoteConfigService.isFeatureEnabled("enable_task_filter");
+        console.log("Feature flag 'show_filter_button' is set to:", this.showFilterButton);
     }
 
     async ionViewWillEnter() {

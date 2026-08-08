@@ -1,12 +1,13 @@
 <ion-header>
     <ion-toolbar>
         <ion-title>Mis Tareas</ion-title>
-
-        <ion-buttons slot="end">
-            <ion-button (click)="presentCategoryFilter($event)">
-                <ion-icon slot="icon-only" name="filter-outline"></ion-icon>
-            </ion-button>
-        </ion-buttons>
+        @if (showFilterButton) {
+            <ion-buttons slot="end">
+                <ion-button (click)="presentCategoryFilter($event)">
+                    <ion-icon slot="icon-only" name="filter-outline"></ion-icon>
+                </ion-button>
+            </ion-buttons>
+        }
     </ion-toolbar>
 </ion-header>
 
