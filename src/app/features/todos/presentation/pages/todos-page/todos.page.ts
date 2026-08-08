@@ -155,14 +155,24 @@ export class TodosPage implements OnInit {
     }
 
     async onReorder(event: CustomEvent<ItemReorderEventDetail>) {
-        const itemToMove = this.tasks.splice(event.detail.from, 1)[0];
+        this.filteredTasks = event.detail.complete(this.filteredTasks);
 
-        this.tasks.splice(event.detail.to, 0, itemToMove);
+        this.filteredTasks = this.filteredTasks.map((task, index) => ({
+            ...task,
+            order: index
+        }));
+
+        this.filteredTasks.forEach((filteredTask) => {
+            const index = this.tasks.findIndex((t) => t.id === filteredTask.id);
+            if (index !== -1) {
+                this.tasks[index] = filteredTask;
+            }
+        });
 
         event.detail.complete();
 
         try {
-            await this.updateMultipleTaskUseCase.execute(this.tasks);
+            await this.updateMultipleTaskUseCase.execute(this.filteredTasks);
         } catch (error) {
             console.error("Error persistiendo el reordenamiento:", error);
         }
@@ -241,8 +251,8 @@ export class TodosPage implements OnInit {
     async openModal(taskToEdit?: Task) {
         const modal = this.modalController.create({
             component: TodoCreationFormComponent,
-            breakpoints: [0, 0.8],
-            initialBreakpoint: 0.8,
+            breakpoints: [0, 0.85],
+            initialBreakpoint: 0.85,
             componentProps: {
                 taskToEdit: taskToEdit,
                 confirmDeleteTask: async () => {

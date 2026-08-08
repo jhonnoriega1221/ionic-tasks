@@ -42,10 +42,17 @@
                         <ion-checkbox
                             slot="start"
                             [checked]="task.completed"
+                            [color]="task.completed ? 'medium' : 'primary'"
+                            [style.opacity]="task.completed ? '0.6' : '1'"
                             (click)="$event.stopPropagation()"
                             (ionChange)="onToggleComplete(task, $event)"
                         />
-                        <ion-label> {{ task.name }} </ion-label>
+                        <ion-label
+                            [style.text-decoration]="task.completed ? 'line-through' : 'none'"
+                            [style.opacity]="task.completed ? '0.3' : '1'"
+                        >
+                            {{ task.name }}
+                        </ion-label>
                         <ion-reorder slot="end" />
                     </ion-item>
                 </ion-reorder-group>
