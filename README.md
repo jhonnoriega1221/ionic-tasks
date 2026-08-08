@@ -79,16 +79,15 @@ Antes de ejecutar el proyecto, asegúrate de tener instalado:
 ## Cómo ejecutar el proyecto en el navegador
 
 1. Clonar el repositorio:
-   `git clone [URL_DEL_REPO]`
+   `git clone https://github.com/jhonnoriega1221/ionic-tasks.git`
 2. Instalar dependencias:
    `npm install`
-3. Configurar Firebase (ver sección [Configuración de Firebase](#configuración-de-firebase)).
-4. Ejecutar en el navegador:
+3. Ejecutar en el navegador:
    `ionic serve`
 
 ## Configuración de Firebase
 
-Este proyecto usa credenciales personales de Firebase para la prueba técnica, por lo que no se incluyen en el repositorio.
+Este proyecto usa credenciales personales de Firebase, si se quiere probar la feature de las flags se debe configurar una app de firebase con otra cuenta y cambiar la configuracion de firebase en `environment.ts`.
 
 1. Crea un proyecto en [Firebase Console](https://console.firebase.google.com/).
 2. Habilita **Remote Config**.
