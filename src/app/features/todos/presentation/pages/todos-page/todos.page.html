@@ -3,37 +3,48 @@
         <ion-title>Mis Tareas</ion-title>
         @if (showFilterButton) {
             <ion-buttons slot="end">
-                <ion-button (click)="presentCategoryFilter($event)">
+                <ion-button id="category-filter">
                     <ion-icon slot="icon-only" name="filter-outline"></ion-icon>
                 </ion-button>
             </ion-buttons>
+            <ion-popover trigger="category-filter" (didDismiss)="applyFilter($event.detail.data)">
+                <ng-template>
+                    <app-category-filter-popover [categories]="this.categories()" />
+                </ng-template>
+            </ion-popover>
         }
     </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" [scrollY]="false">
-    @if (selectedCategoryId) {
+    @if (categoryFilterSelected() && categoryFilterSelected()!.id) {
         <ion-item color="light" lines="full" class="ion-margin-vertical ion-padding-horizontal">
             <ion-label class="ion-text-wrap">
                 <small
                     >Filtro seleccionado:
-                    <strong>{{ getCategoryName(selectedCategoryId) }}</strong></small
+                    <strong>{{ categoryFilterSelected()!.name }}</strong></small
                 >
             </ion-label>
-            <ion-button fill="clear" size="small" color="medium" (click)="clearFilter()">
+            <ion-button
+                fill="clear"
+                size="small"
+                color="medium"
+                (click)="this.applyFilter('')"
+            >
                 Borrar filtro
             </ion-button>
         </ion-item>
     }
-    @if (filteredTasks.length > 0 && tasks.length > 0) {
+
+    @if (tasks().length > 0 && filteredTasks().length > 0) {
         <app-tasks-list
-            [tasks]="filteredTasks"
-            [reorderDisabled]="!!selectedCategoryId"
+            [tasks]="filteredTasks()"
+            [reorderDisabled]="!!categoryFilterSelected()"
             (taskClick)="openModal($event)"
             (toggleComplete)="onToggleComplete($event.task, $event.isCompleted)"
             (reorder)="onReorder($event)"
         />
-    } @else if (filteredTasks.length === 0 && tasks.length > 0) {
+    } @else if (tasks().length > 0 && filteredTasks().length === 0) {
         <app-data-state
             icon="alert-circle-outline"
             title="No hay tareas con este filtro, elimine el filtro o cree una tarea para este filtro"

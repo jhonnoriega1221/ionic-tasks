@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, computed, OnInit, signal, ViewChild } from "@angular/core";
 import {
     IonContent,
     IonHeader,
@@ -9,34 +9,29 @@ import {
     IonIcon,
     IonItem,
     IonLabel,
-    ToastController,
     AlertController,
     ModalController,
     ItemReorderEventDetail,
     IonButtons,
     IonButton,
-    PopoverController
+    IonPopover
 } from "@ionic/angular/standalone";
-import { CdkVirtualScrollViewport, ScrollingModule } from "@angular/cdk/scrolling";
+import { ScrollingModule } from "@angular/cdk/scrolling";
 import { TodoCreationFormComponent } from "../../components/todo-creation-form/todo-creation-form.component";
-import { CreateTaskUseCase } from "../../../domain/usecases/create-task.usecase";
 import { Task } from "../../../domain/models/task.model";
-import { GetTasksUseCase } from "../../../domain/usecases/get-tasks.usecase";
-import { DeleteTasksUseCase } from "../../../domain/usecases/delete-task.usecase";
 import { DataStateComponent } from "src/app/shared/components/data-state/data-state.component";
-import { UpdateTaskUseCase } from "../../../domain/usecases/update-task.usecase";
-import { UpdateMultipleTaskUseCase } from "../../../domain/usecases/update-multiple-tasks.usecase";
-import { Category } from "src/app/features/categories/domain/models/category.model";
-import { GetCategoriesUseCase } from "src/app/features/categories/domain/usecases/get-categories.usecase";
 import { CategoryFilterPopoverComponent } from "../../components/category-filter-popover/category-filter-popover.component";
 import { FirebaseRemoteConfigService } from "src/app/core/firebase-remote-config.service";
 import { TasksListComponent } from "../../components/tasks-list/tasks-list.component";
+import { TaskFacadeService } from "../../facades/task-facade.service";
+import { Category } from "src/app/features/categories/domain/models/category.model";
 @Component({
     selector: "app-todos",
     templateUrl: "./todos.page.html",
     styleUrls: ["./todos.page.scss"],
     standalone: true,
     imports: [
+        IonPopover,
         IonButton,
         IonButtons,
         ScrollingModule,
@@ -50,31 +45,27 @@ import { TasksListComponent } from "../../components/tasks-list/tasks-list.compo
         IonToolbar,
         IonFab,
         DataStateComponent,
-        TasksListComponent
+        TasksListComponent,
+        CategoryFilterPopoverComponent
     ]
 })
 export class TodosPage implements OnInit {
-    @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
     @ViewChild(TasksListComponent) taskList?: TasksListComponent;
 
-    tasks: Task[] = [];
-    filteredTasks: Task[] = [];
-    selectedCategoryId: string | null = null;
-    categories: Category[] = [];
+    tasks = this.taskFacadeService.tasks;
+    categories = this.taskFacadeService.categories;
+    categoryFilterSelected = signal<Category | undefined>(undefined);
+    filteredTasks = computed(() => {
+        const id = this.categoryFilterSelected()?.id!;
+        return id ? this.tasks().filter((t) => t.categoryId === id) : this.tasks();
+    });
     showFilterButton: boolean = false;
 
     constructor(
         private remoteConfigService: FirebaseRemoteConfigService,
-        private toastController: ToastController,
         private alertController: AlertController,
         private modalController: ModalController,
-        private popoverController: PopoverController,
-        private createTaskUseCase: CreateTaskUseCase,
-        private getAllTasksUseCase: GetTasksUseCase,
-        private getAllCategoriesUseCase: GetCategoriesUseCase,
-        private deleteTaskUseCase: DeleteTasksUseCase,
-        private updateTaskUseCase: UpdateTaskUseCase,
-        private updateMultipleTaskUseCase: UpdateMultipleTaskUseCase
+        private taskFacadeService: TaskFacadeService
     ) {}
 
     async ngOnInit() {
@@ -83,134 +74,67 @@ export class TodosPage implements OnInit {
     }
 
     async ionViewWillEnter() {
-        await this.loadCategories();
-        await this.loadTasks();
+        await this.taskFacadeService.loadAll();
     }
 
     ionViewDidEnter() {
         this.taskList?.checkViewportSize();
     }
 
-    getCategoryName(categoryId: string): string {
-        const category = this.categories.find((c) => c.id === categoryId);
-        return category ? category.name : "Desconocida";
-    }
+    // Aplica el filtro
+    applyFilter(categorySelectedId?: string) {
+        if (categorySelectedId === undefined) return;
 
-    private async loadTasks() {
-        try {
-            this.tasks = await this.getAllTasksUseCase.execute();
-            this.filteredTasks = this.tasks;
-        } catch (error) {
-            console.error("Error al cargar las tareas: ", error);
-        }
-    }
-
-    private async loadCategories() {
-        try {
-            this.categories = await this.getAllCategoriesUseCase.execute();
-        } catch (error) {
-            console.error("Error al cargar las categorías: ", error);
-        }
-    }
-
-    async presentCategoryFilter(event: Event) {
-        const popover = await this.popoverController.create({
-            component: CategoryFilterPopoverComponent,
-            event: event,
-            componentProps: {
-                categories: this.categories,
-                selectedCategoryId: this.selectedCategoryId
-            }
-        });
-
-        await popover.present();
-
-        const { data } = await popover.onDidDismiss();
-
-        if (data !== undefined) {
-            this.applyFilter(data);
-        }
-    }
-
-    applyFilter(filterSelected: string) {
-        this.selectedCategoryId = filterSelected;
-        
-        if (!filterSelected) {
-            this.loadTasks();
-        } else {
-            this.filteredTasks = this.tasks.filter(
-                (task) => task.categoryId === filterSelected
-            );
-        }
-
+        const categoryInfo =
+            categorySelectedId === ""
+                ? undefined
+                : this.categories().find((c) => c.id === categorySelectedId);
+        this.categoryFilterSelected.set(categoryInfo);
         setTimeout(() => this.taskList?.checkViewportSize(), 50);
     }
 
-    clearFilter() {
-        this.applyFilter("");
-    }
-
+    // Al cambiar tarea de posición
     async onReorder(event: CustomEvent<ItemReorderEventDetail>) {
-        this.filteredTasks = event.detail.complete(this.filteredTasks);
+        const reordered = event.detail.complete(this.tasks()) as Task[];
 
-        this.filteredTasks = this.filteredTasks.map((task, index) => ({
+        const withNewOrder = reordered.map((task, index) => ({
             ...task,
             order: index
         }));
 
-        this.filteredTasks.forEach((filteredTask) => {
-            const index = this.tasks.findIndex((t) => t.id === filteredTask.id);
-            if (index !== -1) {
-                this.tasks[index] = filteredTask;
-            }
-        });
-
-        event.detail.complete();
-
         try {
-            await this.updateMultipleTaskUseCase.execute(this.filteredTasks);
+            await this.taskFacadeService.reorder(withNewOrder);
         } catch (error) {
             console.error("Error persistiendo el reordenamiento:", error);
+            // Toast
         }
     }
 
+    // Al marcar tarea como completada
     async onToggleComplete(task: Task, isCompleted: boolean) {
         if (task.completed === isCompleted) return;
 
         const updatedTask = { ...task, completed: isCompleted };
 
-        this.tasks = this.tasks.map((t) => (t.id === task.id ? updatedTask : t));
-        this.filteredTasks = this.filteredTasks.map((t) => (t.id === task.id ? updatedTask : t));
-
         try {
-            await this.updateTaskUseCase.execute(updatedTask);
+            await this.taskFacadeService.update(updatedTask);
         } catch (error) {
             console.error("Error al actualizar el estado de la tarea:", error);
-            this.tasks = this.tasks.map((t) => (t.id === task.id ? task : t));
-            this.filteredTasks = this.filteredTasks.map((t) => (t.id === task.id ? task : t));
-
-            const toast = await this.toastController.create({
-                message: "Error al guardar los cambios",
-                duration: 2000,
-                color: "danger"
-            });
-            await toast.present();
+            // toast
         }
     }
 
+    // Mostrar confirmación de eliminación
     async confirmDeleteTask(taskId: string, modal?: HTMLIonModalElement) {
         const alert = await this.alertController.create({
             header: "Confirmar eliminación",
             message: "¿Estás seguro de que deseas eliminar esta tarea?",
             buttons: [
                 {
-                    text: "Cancelar",
-                    role: "cancel",
-                    cssClass: "secondary"
+                    text: "Cancelar"
                 },
                 {
                     text: "Eliminar",
-                    role: "confirm",
                     handler: async () => {
                         if (modal) {
                             await modal.dismiss();
@@ -224,24 +148,18 @@ export class TodosPage implements OnInit {
         await alert.present();
     }
 
+    // Al eliminar tarea
     async onDeleteTask(taskId: string) {
         try {
-            await this.deleteTaskUseCase.execute(taskId);
-
-            this.tasks = this.tasks.filter((t) => t.id !== taskId);
-            this.filteredTasks = this.filteredTasks.filter((t) => t.id !== taskId);
-            const toast = await this.toastController.create({
-                message: "Tarea eliminada exitosamente",
-                positionAnchor: "task-fab",
-                duration: 2000
-            });
-
-            await toast.present();
+            await this.taskFacadeService.remove(taskId);
+            //toast
         } catch (error) {
             console.error("Error al eliminar tarea: ", error);
+            //toast
         }
     }
 
+    // Mostrar modal que contiene al form de creación / edición de tarea
     async openModal(taskToEdit?: Task) {
         const modal = this.modalController.create({
             component: TodoCreationFormComponent,
@@ -250,6 +168,7 @@ export class TodosPage implements OnInit {
             componentProps: {
                 taskToEdit: taskToEdit,
                 confirmDeleteTask: async () => {
+                    // Acción que se realiza al eliminar tarea
                     if (taskToEdit?.id) {
                         this.confirmDeleteTask(taskToEdit.id, await modal);
                     }
@@ -258,42 +177,18 @@ export class TodosPage implements OnInit {
         });
         (await modal).present();
 
+        // Acción que se realiza al hacer submit del formulario
         const { data, role } = await (await modal).onDidDismiss();
-
         if (role === "confirm" && data) {
-            if (taskToEdit) {
-                await this.updateTaskUseCase.execute(data);
-                this.tasks = this.tasks.map((t) => (t.id === data.id ? data : t));
-                this.filteredTasks = this.filteredTasks.map((t) => (t.id === data.id ? data : t));
-
-                const toast = await this.toastController.create({
-                    message: "Tarea actualizada exitosamente",
-                    positionAnchor: "task-fab",
-                    duration: 2000
-                });
-
-                await toast.present();
+            if (!!taskToEdit) {
+                //Si se está editando tarea
+                await this.taskFacadeService.update(data);
             } else {
-                const newTask = await this.createTaskUseCase.execute(data);
-                this.tasks = [newTask, ...this.tasks];
-
-                if (!this.selectedCategoryId || newTask.categoryId === this.selectedCategoryId) {
-                    this.filteredTasks = [newTask, ...this.filteredTasks];
-                }
-
-                const toast = await this.toastController.create({
-                    message: "Tarea creada exitosamente",
-                    positionAnchor: "task-fab",
-                    duration: 2000
-                });
-
-                await toast.present();
+                //Si se está creando tarea
+                await this.taskFacadeService.create(data);
             }
-            setTimeout(() => this.viewport?.checkViewportSize(), 50);
+            //Toast
+            setTimeout(() => this.taskList?.checkViewportSize(), 50);
         }
-    }
-
-    private async handleTaskSaved(data: Task, isEdit: boolean) {
-        
     }
 }

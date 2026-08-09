@@ -11,11 +11,10 @@ import { Category } from "src/app/features/categories/domain/models/category.mod
 })
 export class CategoryFilterPopoverComponent {
     @Input() categories: Category[] = [];
-    @Input() selectedCategoryId: string = "";
 
     constructor(private popoverCtrl: PopoverController) {}
 
-    selectCategory(categoryId: string) {
+    selectCategory(categoryId?: string) {
         this.popoverCtrl.dismiss(categoryId);
     }
 }
