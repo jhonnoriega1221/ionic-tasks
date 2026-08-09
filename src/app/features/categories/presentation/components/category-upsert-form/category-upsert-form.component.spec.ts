@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { IonicModule } from "@ionic/angular";
 
-import { CategoryCreationFormComponent } from "./category-creation-form.component";
+import { CategoryUpsertFormComponent } from "./category-upsert-form.component";
 
-describe("CategoryCreationFormComponent", () => {
-    let component: CategoryCreationFormComponent;
-    let fixture: ComponentFixture<CategoryCreationFormComponent>;
+describe("CategoryUpsertFormComponent", () => {
+    let component: CategoryUpsertFormComponent;
+    let fixture: ComponentFixture<CategoryUpsertFormComponent>;
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [CategoryCreationFormComponent],
+            declarations: [CategoryUpsertFormComponent],
             imports: [IonicModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(CategoryCreationFormComponent);
+        fixture = TestBed.createComponent(CategoryUpsertFormComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     }));

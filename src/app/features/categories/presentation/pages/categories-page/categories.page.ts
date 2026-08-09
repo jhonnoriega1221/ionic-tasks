@@ -21,7 +21,7 @@ import { DeleteCategoryUseCase } from "../../../domain/usecases/delete-category.
 import { UpdateCategoryUseCase } from "../../../domain/usecases/update-category.usecase";
 import { Category } from "../../../domain/models/category.model";
 import { CdkVirtualScrollViewport, ScrollingModule } from "@angular/cdk/scrolling";
-import { CategoryCreationFormComponent } from "../../components/category-creation-form/category-creation-form.component";
+import { CategoryUpsertFormComponent } from "../../components/category-upsert-form/category-upsert-form.component";
 @Component({
     selector: "app-categories",
     templateUrl: "./categories.page.html",
@@ -125,7 +125,7 @@ export class CategoriesPage implements OnInit {
 
     async openModal(categoryToEdit?: Category) {
         const modal = this.modalController.create({
-            component: CategoryCreationFormComponent,
+            component: CategoryUpsertFormComponent,
             breakpoints: [0, 0.5],
             initialBreakpoint: 0.5,
             componentProps: {

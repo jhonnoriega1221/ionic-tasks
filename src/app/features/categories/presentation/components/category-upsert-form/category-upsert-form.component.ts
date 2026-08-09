@@ -19,9 +19,9 @@ import { Category } from "../../../domain/models/category.model";
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 @Component({
-    selector: "app-category-creation-form",
-    templateUrl: "./category-creation-form.component.html",
-    styleUrls: ["./category-creation-form.component.scss"],
+    selector: "app-category-upsert-form",
+    templateUrl: "./category-upsert-form.component.html",
+    styleUrls: ["./category-upsert-form.component.scss"],
     imports: [
         CommonModule,
         ReactiveFormsModule,
@@ -37,7 +37,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angula
         IonButton
     ]
 })
-export class CategoryCreationFormComponent implements OnInit {
+export class CategoryUpsertFormComponent implements OnInit {
     @Input() categoryToEdit?: Category;
     @Output() confirmDeleteCategory?: () => void;
 

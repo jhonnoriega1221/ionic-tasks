@@ -22,7 +22,7 @@ import { Task } from "../../../domain/models/task.model";
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Category } from "src/app/features/categories/domain/models/category.model";
 import { GetCategoriesUseCase } from "src/app/features/categories/domain/usecases/get-categories.usecase";
-import { CategoryCreationFormComponent } from "src/app/features/categories/presentation/components/category-creation-form/category-creation-form.component";
+import { CategoryUpsertFormComponent } from "src/app/features/categories/presentation/components/category-upsert-form/category-upsert-form.component";
 import { CreateCategoryUseCase } from "src/app/features/categories/domain/usecases/create-category.usecase";
 
 @Component({
@@ -89,7 +89,7 @@ export class TaskUpsertFormComponent implements OnInit {
 
     async openCategoryModal() {
         const modal = await this.modalController.create({
-            component: CategoryCreationFormComponent,
+            component: CategoryUpsertFormComponent,
             breakpoints: [0, 0.5],
             initialBreakpoint: 0.5
         });
