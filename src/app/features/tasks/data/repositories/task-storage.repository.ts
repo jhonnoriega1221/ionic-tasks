@@ -7,7 +7,7 @@ import { Task } from "../../domain/models/task.model";
     providedIn: "root"
 })
 export class TaskStorageRepository implements TaskRepository {
-    private readonly STORE_NAME = "todos";
+    private readonly STORE_NAME = "tasks";
 
     constructor(private storage: StorageService) {}
 
@@ -16,12 +16,12 @@ export class TaskStorageRepository implements TaskRepository {
     }
 
     async getAllTasks(): Promise<Task[]> {
-        const todos: Task[] = [];
+        const tasks: Task[] = [];
         await this.storage.forEach(this.STORE_NAME, (value: Task) => {
-            todos.push(value);
+            tasks.push(value);
         });
 
-        return todos.sort((a, b) => (a.order || 0) - (b.order || 0));
+        return tasks.sort((a, b) => (a.order || 0) - (b.order || 0));
     }
 
     async updateMultipleTasks(tasks: Task[]): Promise<void> {

@@ -8,14 +8,14 @@ export const routes: Routes = [
         children: [
             {
                 path: "",
-                redirectTo: "todos",
+                redirectTo: "tasks",
                 pathMatch: "full"
             },
             {
-                path: "todos",
+                path: "tasks",
                 loadComponent: () =>
-                    import("./features/todos/presentation/pages/todos-page/todos.page").then(
-                        (m) => m.TodosPage
+                    import("./features/tasks/presentation/pages/tasks-page/tasks.page").then(
+                        (m) => m.TasksPage
                     )
             },
             {

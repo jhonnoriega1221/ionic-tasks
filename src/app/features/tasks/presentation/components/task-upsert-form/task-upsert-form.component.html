@@ -6,7 +6,7 @@
     </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
-    <form id="todoForm" [formGroup]="todoForm" (ngSubmit)="onSubmit()">
+    <form id="taskForm" [formGroup]="taskForm" (ngSubmit)="onSubmit()">
         <ion-input
             formControlName="name"
             label="Nombre de la tarea"
@@ -78,9 +78,9 @@
                     <ion-col size="10"
                         ><ion-button
                             type="submit"
-                            form="todoForm"
+                            form="taskForm"
                             expand="block"
-                            [disabled]="todoForm.invalid"
+                            [disabled]="taskForm.invalid"
                             >Actualizar tarea</ion-button
                         ></ion-col
                     >
@@ -90,9 +90,9 @@
             <ion-button
                 style="margin-top: 40px"
                 type="submit"
-                form="todoForm"
+                form="taskForm"
                 expand="block"
-                [disabled]="todoForm.invalid"
+                [disabled]="taskForm.invalid"
                 >Crear tarea</ion-button
             >
         }

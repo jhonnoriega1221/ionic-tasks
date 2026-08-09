@@ -17,7 +17,7 @@ import {
     IonPopover
 } from "@ionic/angular/standalone";
 import { ScrollingModule } from "@angular/cdk/scrolling";
-import { TodoCreationFormComponent } from "../../components/todo-creation-form/todo-creation-form.component";
+import { TaskUpsertFormComponent } from "../../components/task-upsert-form/task-upsert-form.component";
 import { Task } from "../../../domain/models/task.model";
 import { DataStateComponent } from "src/app/shared/components/data-state/data-state.component";
 import { CategoryFilterPopoverComponent } from "../../components/category-filter-popover/category-filter-popover.component";
@@ -27,9 +27,9 @@ import { TaskFacadeService } from "../../facades/task-facade.service";
 import { Category } from "src/app/features/categories/domain/models/category.model";
 import { ToastService } from "src/app/shared/services/toast.service";
 @Component({
-    selector: "app-todos",
-    templateUrl: "./todos.page.html",
-    styleUrls: ["./todos.page.scss"],
+    selector: "app-tasks",
+    templateUrl: "./tasks.page.html",
+    styleUrls: ["./tasks.page.scss"],
     standalone: true,
     imports: [
         IonPopover,
@@ -50,7 +50,7 @@ import { ToastService } from "src/app/shared/services/toast.service";
         CategoryFilterPopoverComponent
     ]
 })
-export class TodosPage implements OnInit {
+export class TasksPage implements OnInit {
     @ViewChild(TasksListComponent) taskList?: TasksListComponent;
 
     tasks = this.taskFacadeService.tasks;
@@ -164,7 +164,7 @@ export class TodosPage implements OnInit {
     // Mostrar modal que contiene al form de creación / edición de tarea
     async openModal(taskToEdit?: Task) {
         const modal = this.modalController.create({
-            component: TodoCreationFormComponent,
+            component: TaskUpsertFormComponent,
             breakpoints: [0, 0.85],
             initialBreakpoint: 0.85,
             componentProps: {

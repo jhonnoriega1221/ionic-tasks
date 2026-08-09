@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { IonicModule } from "@ionic/angular";
 
-import { TodoCreationFormComponent } from "./todo-creation-form.component";
+import { TaskUpsertFormComponent } from "./task-upsert-form.component";
 
-describe("TodoCreationFormComponent", () => {
-    let component: TodoCreationFormComponent;
-    let fixture: ComponentFixture<TodoCreationFormComponent>;
+describe("TaskUpsertFormComponent", () => {
+    let component: TaskUpsertFormComponent;
+    let fixture: ComponentFixture<TaskUpsertFormComponent>;
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [TodoCreationFormComponent],
+            declarations: [TaskUpsertFormComponent],
             imports: [IonicModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(TodoCreationFormComponent);
+        fixture = TestBed.createComponent(TaskUpsertFormComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     }));

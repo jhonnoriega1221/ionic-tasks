@@ -26,9 +26,9 @@ import { CategoryCreationFormComponent } from "src/app/features/categories/prese
 import { CreateCategoryUseCase } from "src/app/features/categories/domain/usecases/create-category.usecase";
 
 @Component({
-    selector: "app-todo-creation-form",
-    templateUrl: "./todo-creation-form.component.html",
-    styleUrls: ["./todo-creation-form.component.scss"],
+    selector: "app-task-upsert-form",
+    templateUrl: "./task-upsert-form.component.html",
+    styleUrls: ["./task-upsert-form.component.scss"],
     imports: [
         CommonModule,
         ReactiveFormsModule,
@@ -47,11 +47,11 @@ import { CreateCategoryUseCase } from "src/app/features/categories/domain/usecas
         IonSelectOption
     ]
 })
-export class TodoCreationFormComponent implements OnInit {
+export class TaskUpsertFormComponent implements OnInit {
     @Input() taskToEdit?: Task;
     @Output() confirmDeleteTask?: () => void;
 
-    todoForm!: FormGroup;
+    taskForm!: FormGroup;
     isEditing = false;
 
     categories: Category[] = [];
@@ -66,7 +66,7 @@ export class TodoCreationFormComponent implements OnInit {
     async ngOnInit() {
         this.isEditing = !!this.taskToEdit;
 
-        this.todoForm = this.fb.group({
+        this.taskForm = this.fb.group({
             name: [this.taskToEdit?.name || "", [Validators.required]],
             description: [this.taskToEdit?.description || "", [Validators.required]],
             categoryId: [this.taskToEdit?.categoryId || ""]
@@ -102,7 +102,7 @@ export class TodoCreationFormComponent implements OnInit {
             try {
                 const newCategory = await this.createCategoryUseCase.execute(data);
                 this.categories = [...this.categories, newCategory];
-                this.todoForm.patchValue({
+                this.taskForm.patchValue({
                     categoryId: newCategory.id
                 });
             } catch (error) {
@@ -112,14 +112,14 @@ export class TodoCreationFormComponent implements OnInit {
     }
 
     onSubmit() {
-        if (this.todoForm.valid) {
+        if (this.taskForm.valid) {
             const resultData = this.isEditing
-                ? { ...this.taskToEdit, ...this.todoForm.value }
-                : this.todoForm.value;
+                ? { ...this.taskToEdit, ...this.taskForm.value }
+                : this.taskForm.value;
 
             this.modalController.dismiss(resultData, "confirm");
         } else {
-            this.todoForm.markAllAsTouched();
+            this.taskForm.markAllAsTouched();
         }
     }
 

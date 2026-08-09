@@ -61,7 +61,7 @@ src/
 │   │   ├── settings/
 │   │   │   └── presentation/
 │   │   │
-│   │   └── todos/
+│   │   └── tasks/
 │   │       ├── data/
 │   │       ├── domain/
 │   │       └── presentation/
