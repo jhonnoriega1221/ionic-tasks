@@ -7,15 +7,11 @@ import {
     IonFab,
     IonFabButton,
     IonIcon,
-    IonList,
     IonItem,
     IonLabel,
-    IonCheckbox,
     ToastController,
     AlertController,
     ModalController,
-    IonReorderGroup,
-    IonReorder,
     ItemReorderEventDetail,
     IonButtons,
     IonButton,
@@ -34,6 +30,7 @@ import { Category } from "src/app/features/categories/domain/models/category.mod
 import { GetCategoriesUseCase } from "src/app/features/categories/domain/usecases/get-categories.usecase";
 import { CategoryFilterPopoverComponent } from "../../components/category-filter-popover/category-filter-popover.component";
 import { FirebaseRemoteConfigService } from "src/app/core/firebase-remote-config.service";
+import { TasksListComponent } from "../../components/tasks-list/tasks-list.component";
 @Component({
     selector: "app-todos",
     templateUrl: "./todos.page.html",
@@ -42,12 +39,9 @@ import { FirebaseRemoteConfigService } from "src/app/core/firebase-remote-config
     imports: [
         IonButton,
         IonButtons,
-        IonReorder,
-        IonReorderGroup,
         ScrollingModule,
         IonLabel,
         IonItem,
-        IonList,
         IonIcon,
         IonFabButton,
         IonContent,
@@ -55,13 +49,13 @@ import { FirebaseRemoteConfigService } from "src/app/core/firebase-remote-config
         IonTitle,
         IonToolbar,
         IonFab,
-        IonCheckbox,
-        DataStateComponent
+        DataStateComponent,
+        TasksListComponent
     ]
 })
 export class TodosPage implements OnInit {
     @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
-    presentingElement!: HTMLElement | null;
+    @ViewChild(TasksListComponent) taskList?: TasksListComponent;
 
     tasks: Task[] = [];
     filteredTasks: Task[] = [];
@@ -84,7 +78,6 @@ export class TodosPage implements OnInit {
     ) {}
 
     async ngOnInit() {
-        this.presentingElement = document.querySelector(".page-content");
         this.showFilterButton =
             await this.remoteConfigService.isFeatureEnabled("enable_task_filter");
     }
@@ -95,9 +88,7 @@ export class TodosPage implements OnInit {
     }
 
     ionViewDidEnter() {
-        if (this.viewport) {
-            this.viewport.checkViewportSize();
-        }
+        this.taskList?.checkViewportSize();
     }
 
     getCategoryName(categoryId: string): string {
@@ -137,26 +128,26 @@ export class TodosPage implements OnInit {
         const { data } = await popover.onDidDismiss();
 
         if (data !== undefined) {
-            this.selectedCategoryId = data;
-            this.applyFilter();
+            this.applyFilter(data);
         }
     }
 
-    applyFilter() {
-        if (!this.selectedCategoryId) {
+    applyFilter(filterSelected: string) {
+        this.selectedCategoryId = filterSelected;
+        
+        if (!filterSelected) {
             this.loadTasks();
         } else {
             this.filteredTasks = this.tasks.filter(
-                (task) => task.categoryId === this.selectedCategoryId
+                (task) => task.categoryId === filterSelected
             );
         }
 
-        setTimeout(() => this.viewport?.checkViewportSize(), 50);
+        setTimeout(() => this.taskList?.checkViewportSize(), 50);
     }
 
     clearFilter() {
-        this.selectedCategoryId = "";
-        this.applyFilter();
+        this.applyFilter("");
     }
 
     async onReorder(event: CustomEvent<ItemReorderEventDetail>) {
@@ -183,9 +174,7 @@ export class TodosPage implements OnInit {
         }
     }
 
-    async onToggleComplete(task: Task, event: any) {
-        const isCompleted = event.detail.checked;
-
+    async onToggleComplete(task: Task, isCompleted: boolean) {
         if (task.completed === isCompleted) return;
 
         const updatedTask = { ...task, completed: isCompleted };
@@ -267,15 +256,9 @@ export class TodosPage implements OnInit {
                 }
             }
         });
-
         (await modal).present();
 
         const { data, role } = await (await modal).onDidDismiss();
-
-        if (role === "delete" && data?.id) {
-            this.confirmDeleteTask(data.id);
-            return;
-        }
 
         if (role === "confirm" && data) {
             if (taskToEdit) {
@@ -308,5 +291,9 @@ export class TodosPage implements OnInit {
             }
             setTimeout(() => this.viewport?.checkViewportSize(), 50);
         }
+    }
+
+    private async handleTaskSaved(data: Task, isEdit: boolean) {
+        
     }
 }

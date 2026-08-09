@@ -26,39 +26,13 @@
         </ion-item>
     }
     @if (filteredTasks.length > 0 && tasks.length > 0) {
-        <cdk-virtual-scroll-viewport
-            itemSize="49"
-            style="height: 100%; width: 100%; display: block"
-        >
-            <ion-list class="ion-padding-bottom">
-                <ion-reorder-group
-                    [disabled]="!!selectedCategoryId"
-                    (ionItemReorder)="onReorder($event)"
-                >
-                    <ion-item
-                        *cdkVirtualFor="let task of filteredTasks"
-                        button
-                        (click)="openModal(task)"
-                    >
-                        <ion-checkbox
-                            slot="start"
-                            [checked]="task.completed"
-                            [color]="task.completed ? 'medium' : 'primary'"
-                            [style.opacity]="task.completed ? '0.6' : '1'"
-                            (click)="$event.stopPropagation()"
-                            (ionChange)="onToggleComplete(task, $event)"
-                        />
-                        <ion-label
-                            [style.text-decoration]="task.completed ? 'line-through' : 'none'"
-                            [style.opacity]="task.completed ? '0.3' : '1'"
-                        >
-                            {{ task.name }}
-                        </ion-label>
-                        <ion-reorder slot="end" />
-                    </ion-item>
-                </ion-reorder-group>
-            </ion-list>
-        </cdk-virtual-scroll-viewport>
+        <app-tasks-list
+            [tasks]="filteredTasks"
+            [reorderDisabled]="!!selectedCategoryId"
+            (taskClick)="openModal($event)"
+            (toggleComplete)="onToggleComplete($event.task, $event.isCompleted)"
+            (reorder)="onReorder($event)"
+        />
     } @else if (filteredTasks.length === 0 && tasks.length > 0) {
         <app-data-state
             icon="alert-circle-outline"

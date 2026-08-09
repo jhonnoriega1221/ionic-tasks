@@ -1,0 +1,23 @@
+<cdk-virtual-scroll-viewport itemSize="49" style="height: 100%; width: 100%; display: block">
+    <ion-list class="ion-padding-bottom">
+        <ion-reorder-group [disabled]="reorderDisabled" (ionItemReorder)="onItemReorder($event)">
+            <ion-item *cdkVirtualFor="let task of tasks" button (click)="onItemClick(task)">
+                <ion-checkbox
+                    slot="start"
+                    [checked]="task.completed"
+                    [color]="task.completed ? 'medium' : 'primary'"
+                    [style.opacity]="task.completed ? '0.6' : '1'"
+                    (click)="$event.stopPropagation()"
+                    (ionChange)="onCheckboxChange(task, $event)"
+                />
+                <ion-label
+                    [style.text-decoration]="task.completed ? 'line-through' : 'none'"
+                    [style.opacity]="task.completed ? '0.3' : '1'"
+                >
+                    {{ task.name }}
+                </ion-label>
+                <ion-reorder slot="end" />
+            </ion-item>
+        </ion-reorder-group>
+    </ion-list>
+</cdk-virtual-scroll-viewport>
