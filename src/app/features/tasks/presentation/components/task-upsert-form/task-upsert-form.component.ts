@@ -26,6 +26,7 @@ import { CategoryUpsertFormComponent } from "src/app/features/categories/present
 import { CreateCategoryUseCase } from "src/app/features/categories/domain/usecases/create-category.usecase";
 import { CategoryFacadeService } from "src/app/features/categories/presentation/facades/category-facade.service";
 import { ToastService } from "src/app/shared/services/toast.service";
+import { ColorDotComponent } from "src/app/shared/components/color-dot/color-dot.component";
 
 @Component({
     selector: "app-task-upsert-form",
@@ -46,7 +47,8 @@ import { ToastService } from "src/app/shared/services/toast.service";
         IonTextarea,
         IonButton,
         IonSelect,
-        IonSelectOption
+        IonSelectOption,
+        ColorDotComponent
     ]
 })
 export class TaskUpsertFormComponent implements OnInit {

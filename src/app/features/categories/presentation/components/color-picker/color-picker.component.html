@@ -1,0 +1,22 @@
+<ion-grid>
+    <ion-row>
+        @for (color of colors; track color.id) {
+            <ion-col size="2">
+                <ion-button
+                    type="button"
+                    [disabled]="disabled"
+                    (click)="select(color.id)"
+                    fill="clear"
+                    class="color-button"
+                    shape="round"
+                >
+                    <span
+                        class="color-dot"
+                        [class.selected]="color.id === selectedColor"
+                        [style.background]="color.hex"
+                    ></span>
+                </ion-button>
+            </ion-col>
+        }
+    </ion-row>
+</ion-grid>

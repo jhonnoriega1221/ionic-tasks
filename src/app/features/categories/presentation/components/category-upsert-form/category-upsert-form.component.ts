@@ -17,6 +17,8 @@ import {
 } from "@ionic/angular/standalone";
 import { Category } from "../../../domain/models/category.model";
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { ColorPickerComponent } from "../color-picker/color-picker.component";
+import { DEFAULT_CATEGORY_COLOR } from "../../constants/category-colors";
 
 @Component({
     selector: "app-category-upsert-form",
@@ -34,7 +36,8 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angula
         IonCol,
         IonIcon,
         IonInput,
-        IonButton
+        IonButton,
+        ColorPickerComponent
     ]
 })
 export class CategoryUpsertFormComponent implements OnInit {
@@ -53,7 +56,11 @@ export class CategoryUpsertFormComponent implements OnInit {
         this.isEditing = !!this.categoryToEdit;
 
         this.categoryForm = this.fb.group({
-            name: [this.categoryToEdit?.name || "", [Validators.required]]
+            name: [this.categoryToEdit?.name || "", [Validators.required]],
+            colorId: [
+                this.categoryToEdit?.colorId || DEFAULT_CATEGORY_COLOR.id,
+                [Validators.required]
+            ]
         });
     }
 
@@ -66,7 +73,6 @@ export class CategoryUpsertFormComponent implements OnInit {
             const resultData = this.isEditing
                 ? { ...this.categoryToEdit, ...this.categoryForm.value }
                 : this.categoryForm.value;
-
             this.modalCtrl.dismiss(resultData, "confirm");
         } else {
             this.categoryForm.markAllAsTouched();

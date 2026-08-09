@@ -19,6 +19,7 @@ import { CdkVirtualScrollViewport, ScrollingModule } from "@angular/cdk/scrollin
 import { CategoryUpsertFormComponent } from "../../components/category-upsert-form/category-upsert-form.component";
 import { CategoryFacadeService } from "../../facades/category-facade.service";
 import { ToastService } from "src/app/shared/services/toast.service";
+import { ColorDotComponent } from "src/app/shared/components/color-dot/color-dot.component";
 @Component({
     selector: "app-categories",
     templateUrl: "./categories.page.html",
@@ -36,7 +37,8 @@ import { ToastService } from "src/app/shared/services/toast.service";
         IonTitle,
         IonToolbar,
         IonFab,
-        DataStateComponent
+        DataStateComponent,
+        ColorDotComponent
     ]
 })
 export class CategoriesPage {

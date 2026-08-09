@@ -16,6 +16,7 @@
                     button
                     (click)="openModal(category)"
                 >
+                    <app-color-dot [colorId]="category.colorId" slot="start" />
                     <ion-label> {{ category.name }} </ion-label>
                 </ion-item>
             </ion-list>

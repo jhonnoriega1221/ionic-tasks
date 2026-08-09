@@ -10,12 +10,24 @@ import {
 } from "@ionic/angular/standalone";
 import { CdkVirtualScrollViewport, ScrollingModule } from "@angular/cdk/scrolling";
 import { Task } from "../../../domain/models/task.model";
+import { ColorDotComponent } from "src/app/shared/components/color-dot/color-dot.component";
+import { CategoryFacadeService } from "src/app/features/categories/presentation/facades/category-facade.service";
+import { DEFAULT_CATEGORY_COLOR } from "src/app/features/categories/presentation/constants/category-colors";
 
 @Component({
     selector: "app-tasks-list",
     templateUrl: "./tasks-list.component.html",
     styleUrls: ["./tasks-list.component.scss"],
-    imports: [IonReorder, IonReorderGroup, ScrollingModule, IonLabel, IonItem, IonList, IonCheckbox]
+    imports: [
+        IonReorder,
+        IonReorderGroup,
+        ScrollingModule,
+        IonLabel,
+        IonItem,
+        IonList,
+        IonCheckbox,
+        ColorDotComponent
+    ]
 })
 export class TasksListComponent implements OnInit {
     @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
@@ -27,7 +39,7 @@ export class TasksListComponent implements OnInit {
     @Output() toggleComplete = new EventEmitter<{ task: Task; isCompleted: boolean }>();
     @Output() reorder = new EventEmitter<CustomEvent<ItemReorderEventDetail>>();
 
-    constructor() {}
+    constructor(private categoryFacadeService: CategoryFacadeService) {}
 
     ngOnInit() {}
 
@@ -48,5 +60,12 @@ export class TasksListComponent implements OnInit {
         if (this.viewport) {
             this.viewport.checkViewportSize();
         }
+    }
+
+    getCategoryColorId(categoryId: string): string {
+        return (
+            this.categoryFacadeService.categories().find((c) => c.id === categoryId)?.colorId ??
+            DEFAULT_CATEGORY_COLOR.id
+        );
     }
 }

@@ -2,6 +2,11 @@
     <ion-list class="ion-padding-bottom">
         <ion-reorder-group [disabled]="reorderDisabled" (ionItemReorder)="onItemReorder($event)">
             <ion-item *cdkVirtualFor="let task of tasks" button (click)="onItemClick(task)">
+                <app-color-dot
+                    slot="start"
+                    variant="strip"
+                    [colorId]="getCategoryColorId(task.categoryId)"
+                />
                 <ion-checkbox
                     slot="start"
                     [checked]="task.completed"

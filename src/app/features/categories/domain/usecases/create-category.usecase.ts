@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { CategoryStorageRepository } from "../../data/repositories/categories-storage.repository";
 import { Category } from "../models/category.model";
+import { DEFAULT_CATEGORY_COLOR } from "../../presentation/constants/category-colors";
 
 @Injectable({
     providedIn: "root"
