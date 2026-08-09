@@ -25,6 +25,7 @@ import { FirebaseRemoteConfigService } from "src/app/core/firebase-remote-config
 import { TasksListComponent } from "../../components/tasks-list/tasks-list.component";
 import { TaskFacadeService } from "../../facades/task-facade.service";
 import { Category } from "src/app/features/categories/domain/models/category.model";
+import { ToastService } from "src/app/shared/services/toast.service";
 @Component({
     selector: "app-todos",
     templateUrl: "./todos.page.html",
@@ -63,6 +64,7 @@ export class TodosPage implements OnInit {
 
     constructor(
         private remoteConfigService: FirebaseRemoteConfigService,
+        private toastService: ToastService,
         private alertController: AlertController,
         private modalController: ModalController,
         private taskFacadeService: TaskFacadeService
@@ -106,7 +108,7 @@ export class TodosPage implements OnInit {
             await this.taskFacadeService.reorder(withNewOrder);
         } catch (error) {
             console.error("Error persistiendo el reordenamiento:", error);
-            // Toast
+            this.toastService.showToast("Error al reordenar la tarea");
         }
     }
 
@@ -120,7 +122,7 @@ export class TodosPage implements OnInit {
             await this.taskFacadeService.update(updatedTask);
         } catch (error) {
             console.error("Error al actualizar el estado de la tarea:", error);
-            // toast
+            this.toastService.showToast("Error al actualizar la tarea");
         }
     }
 
@@ -152,10 +154,10 @@ export class TodosPage implements OnInit {
     async onDeleteTask(taskId: string) {
         try {
             await this.taskFacadeService.remove(taskId);
-            //toast
+            this.toastService.showToast("Tarea eliminada");
         } catch (error) {
             console.error("Error al eliminar tarea: ", error);
-            //toast
+            this.toastService.showToast("Hubo un error al eliminar la tarea");
         }
     }
 
@@ -183,9 +185,11 @@ export class TodosPage implements OnInit {
             if (!!taskToEdit) {
                 //Si se está editando tarea
                 await this.taskFacadeService.update(data);
+                this.toastService.showToast("Tarea actualizada exitosamente");
             } else {
                 //Si se está creando tarea
                 await this.taskFacadeService.create(data);
+                this.toastService.showToast("Tarea creada exitosamente");
             }
             //Toast
             setTimeout(() => this.taskList?.checkViewportSize(), 50);
