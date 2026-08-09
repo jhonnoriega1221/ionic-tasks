@@ -9,7 +9,7 @@
             </ion-buttons>
             <ion-popover trigger="category-filter" (didDismiss)="applyFilter($event.detail.data)">
                 <ng-template>
-                    <app-category-filter-popover [categories]="this.categories()" />
+                    <app-category-filter-popover />
                 </ng-template>
             </ion-popover>
         }
@@ -56,7 +56,7 @@
         />
     }
 
-    <ion-fab id="list-fab" horizontal="end" vertical="bottom" slot="fixed">
+    <ion-fab id="task-fab" horizontal="end" vertical="bottom" slot="fixed">
         <ion-fab-button (click)="openModal()">
             <ion-icon name="add"></ion-icon>
         </ion-fab-button>

@@ -24,6 +24,8 @@ import { Category } from "src/app/features/categories/domain/models/category.mod
 import { GetCategoriesUseCase } from "src/app/features/categories/domain/usecases/get-categories.usecase";
 import { CategoryUpsertFormComponent } from "src/app/features/categories/presentation/components/category-upsert-form/category-upsert-form.component";
 import { CreateCategoryUseCase } from "src/app/features/categories/domain/usecases/create-category.usecase";
+import { CategoryFacadeService } from "src/app/features/categories/presentation/facades/category-facade.service";
+import { ToastService } from "src/app/shared/services/toast.service";
 
 @Component({
     selector: "app-task-upsert-form",
@@ -54,13 +56,13 @@ export class TaskUpsertFormComponent implements OnInit {
     taskForm!: FormGroup;
     isEditing = false;
 
-    categories: Category[] = [];
+    categories = this.categoriesFacade.categories;
 
     constructor(
         private fb: FormBuilder,
         private modalController: ModalController,
-        private getCategoriesUseCase: GetCategoriesUseCase,
-        private createCategoryUseCase: CreateCategoryUseCase
+        private categoriesFacade: CategoryFacadeService,
+        private toastService: ToastService
     ) {}
 
     async ngOnInit() {
@@ -72,26 +74,15 @@ export class TaskUpsertFormComponent implements OnInit {
             categoryId: [this.taskToEdit?.categoryId || ""]
         });
 
-        await this.loadCategories();
-    }
-
-    async loadCategories() {
-        try {
-            this.categories = await this.getCategoriesUseCase.execute();
-        } catch (error) {
-            console.error("Error al cargar categorías:", error);
-        }
-    }
-
-    dismiss() {
-        this.modalController.dismiss();
+        await this.categoriesFacade.loadAll();
     }
 
     async openCategoryModal() {
         const modal = await this.modalController.create({
             component: CategoryUpsertFormComponent,
             breakpoints: [0, 0.5],
-            initialBreakpoint: 0.5
+            initialBreakpoint: 0.5,
+            componentProps: {}
         });
 
         await modal.present();
@@ -99,15 +90,11 @@ export class TaskUpsertFormComponent implements OnInit {
         const { data, role } = await modal.onDidDismiss();
 
         if (role === "confirm" && data) {
-            try {
-                const newCategory = await this.createCategoryUseCase.execute(data);
-                this.categories = [...this.categories, newCategory];
-                this.taskForm.patchValue({
-                    categoryId: newCategory.id
-                });
-            } catch (error) {
-                console.error("Hubo error al crear categoría: ", error);
-            }
+            const newCategory = await this.categoriesFacade.create(data);
+            this.taskForm.patchValue({
+                categoryId: newCategory.id
+            });
+            this.toastService.showToast("Categoría creada exitosamente");
         }
     }
 

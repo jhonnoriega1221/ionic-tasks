@@ -14,7 +14,6 @@ import { Category } from "src/app/features/categories/domain/models/category.mod
 })
 export class TaskFacadeService {
     tasks = signal<Task[]>([]);
-    categories = signal<Category[]>([]);
 
     constructor(
         private createTaskUseCase: CreateTaskUseCase,
@@ -26,13 +25,8 @@ export class TaskFacadeService {
     ) {}
 
     async loadAll() {
-        const [tasks, categories] = await Promise.all([
-            this.getAllTasksUseCase.execute(),
-            this.getAllCategoriesUseCase.execute()
-        ]);
-
+        const tasks = await this.getAllTasksUseCase.execute();
         this.tasks.set(tasks);
-        this.categories.set(categories);
     }
 
     async create(data: Omit<Task, "id" | "completed" | "createdAt" | "updatedAt">) {
@@ -53,7 +47,7 @@ export class TaskFacadeService {
 
     async toggleCompleted(task: Task) {
         const previous = this.tasks();
-        
+
         try {
             await this.update(task);
         } catch (error) {
@@ -72,9 +66,5 @@ export class TaskFacadeService {
             this.tasks.set(previous);
             throw error;
         }
-    }
-
-    categoryName(categoryId: string): string {
-        return this.categories().find((c) => c.id === categoryId)?.name ?? "Desconocida";
     }
 }

@@ -5,14 +5,14 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" [scrollY]="false">
-    @if (categories.length > 0) {
+    @if (categories().length > 0) {
         <cdk-virtual-scroll-viewport
             itemSize="49"
             style="height: 100%; width: 100%; display: block"
         >
             <ion-list class="ion-padding-bottom">
                 <ion-item
-                    *cdkVirtualFor="let category of categories"
+                    *cdkVirtualFor="let category of categories()"
                     button
                     (click)="openModal(category)"
                 >

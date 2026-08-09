@@ -41,7 +41,7 @@
                     >
                         <ion-select-option value="">Sin categoría</ion-select-option>
 
-                        @for (category of categories; track category.id) {
+                        @for (category of categories(); track category.id) {
                             <ion-select-option [value]="category.id">
                                 {{ category.name }}
                             </ion-select-option>

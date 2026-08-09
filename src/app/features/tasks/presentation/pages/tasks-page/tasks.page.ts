@@ -26,6 +26,7 @@ import { TasksListComponent } from "../../components/tasks-list/tasks-list.compo
 import { TaskFacadeService } from "../../facades/task-facade.service";
 import { Category } from "src/app/features/categories/domain/models/category.model";
 import { ToastService } from "src/app/shared/services/toast.service";
+import { CategoryFacadeService } from "src/app/features/categories/presentation/facades/category-facade.service";
 @Component({
     selector: "app-tasks",
     templateUrl: "./tasks.page.html",
@@ -54,7 +55,6 @@ export class TasksPage implements OnInit {
     @ViewChild(TasksListComponent) taskList?: TasksListComponent;
 
     tasks = this.taskFacadeService.tasks;
-    categories = this.taskFacadeService.categories;
     categoryFilterSelected = signal<Category | undefined>(undefined);
     filteredTasks = computed(() => {
         const id = this.categoryFilterSelected()?.id!;
@@ -67,7 +67,8 @@ export class TasksPage implements OnInit {
         private toastService: ToastService,
         private alertController: AlertController,
         private modalController: ModalController,
-        private taskFacadeService: TaskFacadeService
+        private taskFacadeService: TaskFacadeService,
+        private categoryFacadeService: CategoryFacadeService
     ) {}
 
     async ngOnInit() {
@@ -76,7 +77,14 @@ export class TasksPage implements OnInit {
     }
 
     async ionViewWillEnter() {
-        await this.taskFacadeService.loadAll();
+        try {
+            await Promise.all([
+                this.taskFacadeService.loadAll(),
+                this.categoryFacadeService.loadAll()
+            ]);
+        } catch (error) {
+            this.showToast("Error al cargar los datos");
+        }
     }
 
     ionViewDidEnter() {
@@ -90,7 +98,7 @@ export class TasksPage implements OnInit {
         const categoryInfo =
             categorySelectedId === ""
                 ? undefined
-                : this.categories().find((c) => c.id === categorySelectedId);
+                : this.categoryFacadeService.categories().find((c) => c.id === categorySelectedId);
         this.categoryFilterSelected.set(categoryInfo);
         setTimeout(() => this.taskList?.checkViewportSize(), 50);
     }
@@ -108,7 +116,7 @@ export class TasksPage implements OnInit {
             await this.taskFacadeService.reorder(withNewOrder);
         } catch (error) {
             console.error("Error persistiendo el reordenamiento:", error);
-            this.toastService.showToast("Error al reordenar la tarea");
+            this.showToast("Error al reordenar la tarea");
         }
     }
 
@@ -122,7 +130,7 @@ export class TasksPage implements OnInit {
             await this.taskFacadeService.update(updatedTask);
         } catch (error) {
             console.error("Error al actualizar el estado de la tarea:", error);
-            this.toastService.showToast("Error al actualizar la tarea");
+            this.showToast("Error al actualizar la tarea");
         }
     }
 
@@ -154,10 +162,10 @@ export class TasksPage implements OnInit {
     async onDeleteTask(taskId: string) {
         try {
             await this.taskFacadeService.remove(taskId);
-            this.toastService.showToast("Tarea eliminada");
+            this.showToast("Tarea eliminada");
         } catch (error) {
             console.error("Error al eliminar tarea: ", error);
-            this.toastService.showToast("Hubo un error al eliminar la tarea");
+            this.showToast("Hubo un error al eliminar la tarea");
         }
     }
 
@@ -182,17 +190,25 @@ export class TasksPage implements OnInit {
         // Acción que se realiza al hacer submit del formulario
         const { data, role } = await (await modal).onDidDismiss();
         if (role === "confirm" && data) {
-            if (!!taskToEdit) {
-                //Si se está editando tarea
-                await this.taskFacadeService.update(data);
-                this.toastService.showToast("Tarea actualizada exitosamente");
-            } else {
-                //Si se está creando tarea
-                await this.taskFacadeService.create(data);
-                this.toastService.showToast("Tarea creada exitosamente");
+            try {
+                if (!!taskToEdit) {
+                    //Si se está editando tarea
+                    await this.taskFacadeService.update(data);
+                    this.showToast("Tarea actualizada exitosamente");
+                } else {
+                    //Si se está creando tarea
+                    await this.taskFacadeService.create(data);
+                    this.showToast("Tarea creada exitosamente");
+                }
+            } catch (error) {
+                console.error("Error al guardar tarea:", error);
+                this.showToast("Hubo un error al guardar la tarea");
             }
-            //Toast
             setTimeout(() => this.taskList?.checkViewportSize(), 50);
         }
+    }
+
+    private showToast(message: string) {
+        this.toastService.showToast(message, { positionAnchor: "task-fab" });
     }
 }
