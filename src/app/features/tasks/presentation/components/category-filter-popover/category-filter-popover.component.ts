@@ -12,7 +12,10 @@ import { CategoryFacadeService } from "src/app/features/categories/presentation/
 })
 export class CategoryFilterPopoverComponent {
     categories = this.categoryFacade.categories;
-    constructor(private popoverCtrl: PopoverController, private categoryFacade: CategoryFacadeService) {}
+    constructor(
+        private popoverCtrl: PopoverController,
+        private categoryFacade: CategoryFacadeService
+    ) {}
 
     selectCategory(categoryId?: string) {
         this.popoverCtrl.dismiss(categoryId);
