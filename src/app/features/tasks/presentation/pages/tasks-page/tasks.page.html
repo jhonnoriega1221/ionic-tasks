@@ -2,30 +2,28 @@
     <ion-toolbar>
         <ion-title>Mis Tareas</ion-title>
         <ion-buttons slot="end">
-            @if (showFilterButton) {
-                <ion-button id="category-filter">
-                    <ion-icon slot="icon-only" name="filter-outline"></ion-icon>
+            <ion-button id="category-filter">
+                <ion-icon slot="icon-only" name="filter-outline"></ion-icon>
+            </ion-button>
+            <ion-popover trigger="category-filter" (didDismiss)="applyFilter($event.detail.data)">
+                <ng-template>
+                    <app-category-filter-popover [selected]="categoryFilterSelected()?.id" />
+                </ng-template>
+            </ion-popover>
+
+            @if (showViewButton) {
+                <ion-button id="list-options">
+                    <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
                 </ion-button>
                 <ion-popover
-                    trigger="category-filter"
-                    (didDismiss)="applyFilter($event.detail.data)"
+                    trigger="list-options"
+                    (didDismiss)="onOrderViewChange($event.detail.data)"
                 >
                     <ng-template>
-                        <app-category-filter-popover [selected]="categoryFilterSelected()?.id" />
+                        <app-list-options-popover [selected]="orderSelected()" />
                     </ng-template>
                 </ion-popover>
             }
-            <ion-button id="list-options">
-                <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
-            </ion-button>
-            <ion-popover
-                trigger="list-options"
-                (didDismiss)="onOrderViewChange($event.detail.data)"
-            >
-                <ng-template>
-                    <app-list-options-popover [selected]="orderSelected()" />
-                </ng-template>
-            </ion-popover>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>

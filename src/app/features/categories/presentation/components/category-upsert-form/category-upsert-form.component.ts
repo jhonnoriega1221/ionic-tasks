@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, Input, OnInit, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
     IonButton,
@@ -11,9 +11,7 @@ import {
     IonHeader,
     IonToolbar,
     IonTitle,
-    IonButtons,
-    ModalController,
-    IonFooter
+    ModalController
 } from "@ionic/angular/standalone";
 import { Category } from "../../../domain/models/category.model";
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angular/forms";

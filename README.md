@@ -42,7 +42,7 @@ Se utilizó una arquitectura basada en features, con cuatro carpetas iniciales d
 
 **features:** Contiene la lógica de negocio de la aplicación, sus componentes principales, páginas y repositorios. Cada feature se divide en tres capas:
 
-- **feature/presentation:** Almacena los elementos de la UI y la lógica para controlar sus estados. Contiene páginas y componentes.
+- **feature/presentation:** Almacena los elementos de la UI y la lógica para controlar sus estados. Contiene páginas, componentes, facades y demás componentes relacionados con la presentación visual.
 - **feature/domain:** Contiene los casos de uso, modelos e interfaces propias de la lógica de negocio. Es la carpeta a la que se suelen hacer tests unitarios, ya que ahí está lo fundamental de la lógica de negocio.
 - **feature/data:** Hace de puente con los elementos externos y de bajo nivel de la aplicación. Aquí se suelen almacenar repositorios y funciones que conectan con la API y/o la base de datos.
 
@@ -99,26 +99,45 @@ Este proyecto usa credenciales personales de Firebase, si se quiere probar la fe
 
 ### Android
 
-Para la compilación en Android se requiere al menos esto, ya que utiliza Cordova:
+Entorno requerido para compilar Android con Cordova:
 
 - Java JDK: 17.0.20
 - Android SDK API level 33 (Android 13.0 "Tiramisu")
 - Gradle 8.7
 
-Pasos:
+Pasos teóricos de compilación:
 
-1. Ejecuta: `ionic build`
-2. Ejecuta: `cordova platform add android`
-3. Ejecuta: `npx cordova build android`
+1. Compila los recursos web del proyecto: `ionic build`
+2. Añade la plataforma Android: `cordova platform add android`
+3. Construye el proyecto base: `npx cordova build android`
 4. El APK estará disponible en `platforms/android/app/build/outputs/apk/debug/app-debug.apk`
 
-## Compilación en iOS
+### iOS
 
-No fue posible generar el archivo IPA ni documentar los pasos de compilación para iOS, ya que este proceso requiere una máquina con macOS y Xcode instalados, y no cuento con acceso a un equipo con ese sistema operativo. La estructura del proyecto es compatible con Cordova para iOS (`cordova platform add ios`), pero la compilación y firma del build quedan pendientes de un entorno macOS.
+> **Aviso:** La compilación nativa para iOS requiere de manera estricta un entorno macOS con Xcode. Los siguientes pasos y requisitos están basados en la documentación oficial de Ionic y Cordova (agosto 2026), no en una compilación verificada, ya que no se contó con un dispositivo MacOs en el entorno de desarrollo. La generación final del `.ipa` puede requerir ajustes adicionales en los perfiles de aprovisionamiento y certificados, y las versiones de Xcode indicadas deben confirmarse contra la [documentación oficial de Apple](https://developer.apple.com/support/xcode/), ya que Apple actualiza el mínimo exigido varias veces al año.
+
+Entorno requerido:
+
+- Sistema operativo: macOS (versión compatible con la versión de Xcode instalada)
+- Xcode — se recomienda la versión más reciente disponible en el Mac App Store, ya que Apple exige compilar con la última versión para publicar en el App Store
+- CocoaPods (obligatorio para los plugins de Cordova en iOS; se instala automáticamente al compilar el proyecto)
+- Cuenta de Apple Developer activa, requerida para firmar el código incluso en pruebas locales
+
+Pasos teóricos de compilación:
+
+1. Compila los recursos web del proyecto: `ionic build`
+2. Añade la plataforma iOS: `cordova platform add ios`
+3. Construye el proyecto base (instala automáticamente las dependencias de CocoaPods): `npx cordova build ios`
+4. Firma y generación del `.ipa` (flujo estándar por Xcode, ya que generarlo directo desde terminal requiere certificados preconfigurados):
+    - Navega a `platforms/ios/` y abre `App.xcworkspace` (no `.xcodeproj`) con Xcode.
+    - Selecciona el proyecto raíz → pestaña **Signing & Capabilities** → asigna tu **Team** de desarrollo.
+    - En la barra superior, selecciona como destino **Any iOS Device (arm64)**.
+    - Ve a **Product > Archive**.
+    - Desde el **Organizer** de Xcode, exporta el archivo generado como `.ipa` para distribución.
 
 ## Feature flag de Firebase
 
-En Firebase se configuró la app y se agregó el feature flag `enable_task_filter`, el cual muestra y oculta el botón para filtrar la lista de tareas.
+En Firebase se configuró la app y se agregó el feature flag `enable_view_option`, el cual muestra y oculta el botón para cambiar el tipo de vista de tareas.
 
 ## Técnicas de optimización
 
@@ -127,3 +146,13 @@ En Firebase se configuró la app y se agregó el feature flag `enable_task_filte
 - Indicador visual dinámico cuando un filtro está activo (bloqueando el reordenamiento para evitar corrupción de índices).
 - Persistencia de la preferencia del usuario mediante `StorageService`.
 - Al reordenar la lista, en lugar de hacer un `await` secuencial por cada tarea modificada, se realiza un `Promise.all()` en el `StorageService`. Esto ejecuta las escrituras en IndexedDB de forma concurrente, reduciendo el tiempo de escritura a unos pocos milisegundos.
+- Estado centralizado por feature mediante facades registrados como singletons de Angular. Al ser una única instancia compartida en toda la app, cualquier componente puede inyectar el facade y acceder a la misma fuente de datos sin duplicar estado ni pasarlo manualmente entre componentes.
+- Reactividad granular con signals (`signal`/`computed`): las vistas se actualizan automáticamente solo cuando cambian los datos que realmente consumen, sin necesidad de `ChangeDetectorRef` manual ni de una librería de estado externa (Redux/NgRx), reduciendo el código necesario y el riesgo de desincronización entre el estado y la UI.
+
+## Funcionalidades extra
+
+Además de los requerimientos solicitados, se agregaron las siguientes mejoras:
+
+- **Colores por categoría**: cada categoría se identifica con un color de una paleta de 12 tonos predefinidos, pensada para verse bien tanto en modo claro como oscuro. El color se muestra como un punto junto al nombre en la lista de categorías y como una franja lateral en cada tarea, así el usuario reconoce la categoría de un vistazo, sin necesidad de entrar al detalle de la tarea.
+- **Reordenamiento manual de tareas**: el usuario puede arrastrar y soltar las tareas para definir su propio orden de prioridad, con persistencia inmediata en el almacenamiento local.
+- **Vista agrupada por fecha de creación**: además del orden manual, existe una segunda vista que agrupa automáticamente las tareas por el día en que fueron creadas, útil para revisar el historial de actividad (esta funcion se habilita por feature flag).

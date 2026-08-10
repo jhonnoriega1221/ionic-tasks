@@ -7,7 +7,6 @@ import { DeleteTasksUseCase } from "../../domain/usecases/delete-task.usecase";
 import { UpdateMultipleTaskUseCase } from "../../domain/usecases/update-multiple-tasks.usecase";
 
 import { Task } from "../../domain/models/task.model";
-import { Category } from "src/app/features/categories/domain/models/category.model";
 
 @Injectable({
     providedIn: "root"
@@ -18,7 +17,6 @@ export class TaskFacadeService {
     constructor(
         private createTaskUseCase: CreateTaskUseCase,
         private getAllTasksUseCase: GetTasksUseCase,
-        private getAllCategoriesUseCase: GetCategoriesUseCase,
         private deleteTaskUseCase: DeleteTasksUseCase,
         private updateTaskUseCase: UpdateTaskUseCase,
         private updateMultipleTaskUseCase: UpdateMultipleTaskUseCase

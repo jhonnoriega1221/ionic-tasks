@@ -1,15 +1,5 @@
-import {
-    Component,
-    computed,
-    EventEmitter,
-    input,
-    Input,
-    OnInit,
-    output,
-    Output
-} from "@angular/core";
+import { Component, computed, input, output } from "@angular/core";
 import { Task } from "../../../domain/models/task.model";
-import { IonList, IonListHeader, IonLabel, IonItem } from "@ionic/angular/standalone";
 import { IonicModule } from "@ionic/angular";
 import { CategoryFacadeService } from "src/app/features/categories/presentation/facades/category-facade.service";
 import { ColorDotComponent } from "src/app/shared/components/color-dot/color-dot.component";
@@ -50,11 +40,13 @@ export class DateTasksListComponent {
             .sort(([a], [b]) => b.localeCompare(a))
             .map(([dateKey, tasks]) => ({
                 dateKey,
-                label: new Date(dateKey).toLocaleDateString("es-CO", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric"
-                }),
+                label: tasks[0].createdAt
+                    ? new Date(tasks[0].createdAt).toLocaleDateString("es-CO", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric"
+                      })
+                    : dateKey,
                 tasks
             }));
     }

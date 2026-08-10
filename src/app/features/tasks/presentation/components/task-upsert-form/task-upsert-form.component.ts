@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, Input, OnInit, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
     IonButton,
@@ -14,20 +14,14 @@ import {
     IonHeader,
     IonToolbar,
     IonTitle,
-    IonButtons,
     ModalController,
-    IonFooter,
     IonText
 } from "@ionic/angular/standalone";
 import { Task } from "../../../domain/models/task.model";
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Category } from "src/app/features/categories/domain/models/category.model";
-import { GetCategoriesUseCase } from "src/app/features/categories/domain/usecases/get-categories.usecase";
 import { CategoryUpsertFormComponent } from "src/app/features/categories/presentation/components/category-upsert-form/category-upsert-form.component";
-import { CreateCategoryUseCase } from "src/app/features/categories/domain/usecases/create-category.usecase";
 import { CategoryFacadeService } from "src/app/features/categories/presentation/facades/category-facade.service";
 import { ToastService } from "src/app/shared/services/toast.service";
-import { ColorDotComponent } from "src/app/shared/components/color-dot/color-dot.component";
 
 @Component({
     selector: "app-task-upsert-form",
@@ -49,8 +43,7 @@ import { ColorDotComponent } from "src/app/shared/components/color-dot/color-dot
         IonTextarea,
         IonButton,
         IonSelect,
-        IonSelectOption,
-        ColorDotComponent
+        IonSelectOption
     ]
 })
 export class TaskUpsertFormComponent implements OnInit {

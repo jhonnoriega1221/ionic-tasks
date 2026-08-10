@@ -101,8 +101,8 @@ export class CategoriesPage {
     async openModal(categoryToEdit?: Category) {
         const modal = this.modalController.create({
             component: CategoryUpsertFormComponent,
-            breakpoints: [0, 0.5],
-            initialBreakpoint: 0.5,
+            breakpoints: [0, 0.6],
+            initialBreakpoint: 0.6,
             componentProps: {
                 categoryToEdit: categoryToEdit,
                 confirmDeleteCategory: async () => {

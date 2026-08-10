@@ -66,7 +66,7 @@ export class TasksPage implements OnInit {
         const id = this.categoryFilterSelected()?.id!;
         return id ? this.tasks().filter((t) => t.categoryId === id) : this.tasks();
     });
-    showFilterButton: boolean = false;
+    showViewButton: boolean = false;
 
     constructor(
         private remoteConfigService: FirebaseRemoteConfigService,
@@ -78,8 +78,7 @@ export class TasksPage implements OnInit {
     ) {}
 
     async ngOnInit() {
-        this.showFilterButton =
-            await this.remoteConfigService.isFeatureEnabled("enable_task_filter");
+        this.showViewButton = await this.remoteConfigService.isFeatureEnabled("enable_view_option");
     }
 
     async ionViewWillEnter() {

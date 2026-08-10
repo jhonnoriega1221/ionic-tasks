@@ -1,7 +1,6 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, Input } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { IonItem, IonLabel, IonList, PopoverController, IonIcon } from "@ionic/angular/standalone";
-import { CategoryFacadeService } from "src/app/features/categories/presentation/facades/category-facade.service";
 import { ORDER_VIEW } from "../../constants/list-types";
 
 @Component({
