@@ -5,6 +5,7 @@
     <ion-item button (click)="selectCategory('')">
         <ion-icon slot="start" [name]="!selected ? 'radio-button-on' : 'radio-button-off'" />
         <ion-label>Todas las categorías</ion-label>
+        <app-color-dot colorId="DEFAULT_CATEGORY_COLOR.id" slot="end" />
     </ion-item>
     @for (category of categories(); track category.id) {
         <ion-item button (click)="selectCategory(category.id)">
@@ -13,6 +14,7 @@
                 [name]="selected === category.id ? 'radio-button-on' : 'radio-button-off'"
             />
             <ion-label>{{ category.name }}</ion-label>
+            <app-color-dot [colorId]="getCategoryColorId(category.id)" slot="end" />
         </ion-item>
     }
 </ion-list>
