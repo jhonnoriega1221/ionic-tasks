@@ -15,6 +15,7 @@
 - [Compilación en iOS](#compilación-en-ios)
 - [Feature flag de Firebase](#feature-flag-de-firebase)
 - [Técnicas de optimización](#técnicas-de-optimización)
+- [Funcionalidades extra](#funcionalidades-extra)
 
 ## Descripción
 
@@ -155,4 +156,4 @@ Además de los requerimientos solicitados, se agregaron las siguientes mejoras:
 
 - **Colores por categoría**: cada categoría se identifica con un color de una paleta de 12 tonos predefinidos, pensada para verse bien tanto en modo claro como oscuro. El color se muestra como un punto junto al nombre en la lista de categorías y como una franja lateral en cada tarea, así el usuario reconoce la categoría de un vistazo, sin necesidad de entrar al detalle de la tarea.
 - **Reordenamiento manual de tareas**: el usuario puede arrastrar y soltar las tareas para definir su propio orden de prioridad, con persistencia inmediata en el almacenamiento local.
-- **Vista agrupada por fecha de creación**: además del orden manual, existe una segunda vista que agrupa automáticamente las tareas por el día en que fueron creadas, útil para revisar el historial de actividad (esta funcion se habilita por feature flag).
+- **Vista agrupada por fecha de creación**: además del orden manual, existe una segunda vista que agrupa automáticamente las tareas por el día en que fueron creadas, útil para revisar el historial de actividad (esta funcion se habilita por feature flag `showViewButton`).
