@@ -3,10 +3,15 @@
         >Filtrar por...</small
     >
     <ion-item button (click)="selectCategory('')">
+        <ion-icon slot="start" [name]="!selected ? 'radio-button-on' : 'radio-button-off'" />
         <ion-label>Todas las categorías</ion-label>
     </ion-item>
     @for (category of categories(); track category.id) {
         <ion-item button (click)="selectCategory(category.id)">
+            <ion-icon
+                slot="start"
+                [name]="selected === category.id ? 'radio-button-on' : 'radio-button-off'"
+            />
             <ion-label>{{ category.name }}</ion-label>
         </ion-item>
     }

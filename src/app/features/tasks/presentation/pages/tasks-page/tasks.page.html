@@ -11,7 +11,7 @@
                     (didDismiss)="applyFilter($event.detail.data)"
                 >
                     <ng-template>
-                        <app-category-filter-popover />
+                        <app-category-filter-popover [selected]="categoryFilterSelected()?.id" />
                     </ng-template>
                 </ion-popover>
             }
@@ -23,7 +23,7 @@
                 (didDismiss)="onOrderViewChange($event.detail.data)"
             >
                 <ng-template>
-                    <app-list-options-popover />
+                    <app-list-options-popover [selected]="orderSelected()" />
                 </ng-template>
             </ion-popover>
         </ion-buttons>

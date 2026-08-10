@@ -11,7 +11,9 @@ import {
     alertCircleOutline,
     filterOutline,
     moonOutline,
-    ellipsisVertical
+    ellipsisVertical,
+    radioButtonOn,
+    radioButtonOff
 } from "ionicons/icons";
 
 @Component({
@@ -31,7 +33,9 @@ export class MainLayoutComponent implements OnInit {
             alertCircleOutline,
             filterOutline,
             moonOutline,
-            ellipsisVertical
+            ellipsisVertical,
+            radioButtonOff,
+            radioButtonOn
         });
     }
 

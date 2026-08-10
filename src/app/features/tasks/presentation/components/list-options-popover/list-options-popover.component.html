@@ -4,6 +4,10 @@
     >
     @for (order of orderViews; track order.id) {
         <ion-item button (click)="select(order.id)">
+            <ion-icon
+                slot="start"
+                [name]="selected === order.id ? 'radio-button-on' : 'radio-button-off'"
+            />
             <ion-label>{{ order.name }}</ion-label>
         </ion-item>
     }
