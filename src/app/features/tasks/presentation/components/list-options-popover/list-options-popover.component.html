@@ -1,0 +1,10 @@
+<ion-list>
+    <small style="text-align: center; display: block; margin-top: 16px; margin-bottom: 16px"
+        >Ordenar por...</small
+    >
+    @for (order of orderViews; track order.id) {
+        <ion-item button (click)="select(order.id)">
+            <ion-label>{{ order.name }}</ion-label>
+        </ion-item>
+    }
+</ion-list>

@@ -1,18 +1,32 @@
 <ion-header>
     <ion-toolbar>
         <ion-title>Mis Tareas</ion-title>
-        @if (showFilterButton) {
-            <ion-buttons slot="end">
+        <ion-buttons slot="end">
+            @if (showFilterButton) {
                 <ion-button id="category-filter">
                     <ion-icon slot="icon-only" name="filter-outline"></ion-icon>
                 </ion-button>
-            </ion-buttons>
-            <ion-popover trigger="category-filter" (didDismiss)="applyFilter($event.detail.data)">
+                <ion-popover
+                    trigger="category-filter"
+                    (didDismiss)="applyFilter($event.detail.data)"
+                >
+                    <ng-template>
+                        <app-category-filter-popover />
+                    </ng-template>
+                </ion-popover>
+            }
+            <ion-button id="list-options">
+                <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+            </ion-button>
+            <ion-popover
+                trigger="list-options"
+                (didDismiss)="onOrderViewChange($event.detail.data)"
+            >
                 <ng-template>
-                    <app-category-filter-popover />
+                    <app-list-options-popover />
                 </ng-template>
             </ion-popover>
-        }
+        </ion-buttons>
     </ion-toolbar>
 </ion-header>
 
@@ -32,13 +46,24 @@
     }
 
     @if (tasks().length > 0 && filteredTasks().length > 0) {
-        <app-tasks-list
-            [tasks]="filteredTasks()"
-            [reorderDisabled]="!!categoryFilterSelected()"
-            (taskClick)="openModal($event)"
-            (toggleComplete)="onToggleComplete($event.task, $event.isCompleted)"
-            (reorder)="onReorder($event)"
-        />
+        @switch (orderSelected()) {
+            @case ("date-order") {
+                <app-date-tasks-list
+                    [tasks]="filteredTasks()"
+                    (taskClick)="openModal($event)"
+                    (toggleComplete)="onToggleComplete($event.task, $event.isCompleted)"
+                />
+            }
+            @default {
+                <app-tasks-list
+                    [tasks]="filteredTasks()"
+                    [reorderDisabled]="!!categoryFilterSelected()"
+                    (taskClick)="openModal($event)"
+                    (toggleComplete)="onToggleComplete($event.task, $event.isCompleted)"
+                    (reorder)="onReorder($event)"
+                />
+            }
+        }
     } @else if (tasks().length > 0 && filteredTasks().length === 0) {
         <app-data-state
             icon="alert-circle-outline"

@@ -10,7 +10,8 @@ import {
     trash,
     alertCircleOutline,
     filterOutline,
-    moonOutline
+    moonOutline,
+    ellipsisVertical
 } from "ionicons/icons";
 
 @Component({
@@ -29,7 +30,8 @@ export class MainLayoutComponent implements OnInit {
             trash,
             alertCircleOutline,
             filterOutline,
-            moonOutline
+            moonOutline,
+            ellipsisVertical
         });
     }
 

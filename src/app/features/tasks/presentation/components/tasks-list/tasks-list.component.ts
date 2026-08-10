@@ -29,7 +29,7 @@ import { DEFAULT_CATEGORY_COLOR } from "src/app/features/categories/presentation
         ColorDotComponent
     ]
 })
-export class TasksListComponent implements OnInit {
+export class TasksListComponent {
     @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
 
     @Input({ required: true }) tasks: Task[] = [];
@@ -40,8 +40,6 @@ export class TasksListComponent implements OnInit {
     @Output() reorder = new EventEmitter<CustomEvent<ItemReorderEventDetail>>();
 
     constructor(private categoryFacadeService: CategoryFacadeService) {}
-
-    ngOnInit() {}
 
     onItemClick(task: Task) {
         this.taskClick.emit(task);

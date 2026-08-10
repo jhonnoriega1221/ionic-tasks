@@ -6,7 +6,6 @@ import { CategoryFacadeService } from "src/app/features/categories/presentation/
 
 @Component({
     selector: "app-category-filter-popover",
-    standalone: true,
     imports: [CommonModule, IonList, IonItem, IonLabel],
     templateUrl: `./category-filter-popover.component.html`
 })

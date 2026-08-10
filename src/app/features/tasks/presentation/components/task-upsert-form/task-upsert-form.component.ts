@@ -16,7 +16,8 @@ import {
     IonTitle,
     IonButtons,
     ModalController,
-    IonFooter
+    IonFooter,
+    IonText
 } from "@ionic/angular/standalone";
 import { Task } from "../../../domain/models/task.model";
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angular/forms";
@@ -33,6 +34,7 @@ import { ColorDotComponent } from "src/app/shared/components/color-dot/color-dot
     templateUrl: "./task-upsert-form.component.html",
     styleUrls: ["./task-upsert-form.component.scss"],
     imports: [
+        IonText,
         CommonModule,
         ReactiveFormsModule,
         IonTitle,
@@ -72,7 +74,7 @@ export class TaskUpsertFormComponent implements OnInit {
 
         this.taskForm = this.fb.group({
             name: [this.taskToEdit?.name || "", [Validators.required]],
-            description: [this.taskToEdit?.description || "", [Validators.required]],
+            description: [this.taskToEdit?.description || ""],
             categoryId: [this.taskToEdit?.categoryId || ""]
         });
 

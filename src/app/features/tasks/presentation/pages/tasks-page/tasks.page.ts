@@ -27,6 +27,9 @@ import { TaskFacadeService } from "../../facades/task-facade.service";
 import { Category } from "src/app/features/categories/domain/models/category.model";
 import { ToastService } from "src/app/shared/services/toast.service";
 import { CategoryFacadeService } from "src/app/features/categories/presentation/facades/category-facade.service";
+import { ListOptionsPopoverComponent } from "../../components/list-options-popover/list-options-popover.component";
+import { DEFAULT_ORDER_VIEW, ORDER_VIEW, OrderViewId } from "../../constants/list-types";
+import { DateTasksListComponent } from "../../components/date-tasks-list/date-tasks-list.component";
 @Component({
     selector: "app-tasks",
     templateUrl: "./tasks.page.html",
@@ -48,7 +51,9 @@ import { CategoryFacadeService } from "src/app/features/categories/presentation/
         IonFab,
         DataStateComponent,
         TasksListComponent,
-        CategoryFilterPopoverComponent
+        CategoryFilterPopoverComponent,
+        ListOptionsPopoverComponent,
+        DateTasksListComponent
     ]
 })
 export class TasksPage implements OnInit {
@@ -56,6 +61,7 @@ export class TasksPage implements OnInit {
 
     tasks = this.taskFacadeService.tasks;
     categoryFilterSelected = signal<Category | undefined>(undefined);
+    orderSelected = signal<OrderViewId>(DEFAULT_ORDER_VIEW.id);
     filteredTasks = computed(() => {
         const id = this.categoryFilterSelected()?.id!;
         return id ? this.tasks().filter((t) => t.categoryId === id) : this.tasks();
@@ -101,6 +107,11 @@ export class TasksPage implements OnInit {
                 : this.categoryFacadeService.categories().find((c) => c.id === categorySelectedId);
         this.categoryFilterSelected.set(categoryInfo);
         setTimeout(() => this.taskList?.checkViewportSize(), 50);
+    }
+
+    // Selecciona el tipo de vista del orden de las tareas (mi orden, por fecha)
+    onOrderViewChange(orderId: OrderViewId | undefined) {
+        if (orderId) this.orderSelected.set(orderId);
     }
 
     // Al cambiar tarea de posición
