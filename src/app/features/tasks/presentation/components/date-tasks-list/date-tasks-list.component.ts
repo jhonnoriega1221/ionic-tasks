@@ -40,7 +40,7 @@ export class DateTasksListComponent {
         const groups = new Map<string, Task[]>();
 
         for (const task of tasks) {
-            const dateKey = new Date(task.createdAt).toISOString().slice(0, 10);
+            const dateKey = this.toLocalDateKey(task.createdAt);
             const group = groups.get(dateKey) ?? [];
             group.push(task);
             groups.set(dateKey, group);
@@ -57,6 +57,13 @@ export class DateTasksListComponent {
                 }),
                 tasks
             }));
+    }
+
+    toLocalDateKey(date: Date): string {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
     }
 
     getCategoryColorId(categoryId: string): string {

@@ -64,13 +64,13 @@
         @if (isEditing) {
             <div style="text-align: end">
                 <ion-text color="medium">
-                    <small>Creada el: {{ taskToEdit?.createdAt | date: "dd/mm/yyyy" }}</small>
+                    <small>Creada el: {{ taskToEdit?.createdAt | date: "dd/MM/yyyy" }}</small>
                 </ion-text>
                 <br />
                 <ion-text color="medium">
                     <small
                         >Última actualización:
-                        {{ taskToEdit?.updatedAt | date: "dd/mm/yyyy" }}</small
+                        {{ taskToEdit?.updatedAt | date: "dd/MM/yyyy" }}</small
                     >
                 </ion-text>
             </div>
